@@ -1,8 +1,10 @@
+package Tests;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
+import BlackJack.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class PlayerTest {
@@ -56,15 +58,15 @@ class PlayerTest {
         jhon.setPlayerHand(deck);
         jhon.updateAceValue(4,card6);
         Card originalCard = jhon.getPlayerHand().getCard(4);
-        assertEquals(1,originalCard.getCardSumValue());
+        Assertions.assertEquals(1,originalCard.getCardSumValue());
     }
 
     @Test
     void placeBet() {
         jhon.placeBet(5000);
-        assertEquals(1000,jhon.getChipBalance());
+        Assertions.assertEquals(1000,jhon.getChipBalance());
         jhon.placeBet(1000);
         jhon.placeBet(1);
-        assertEquals(0,jhon.getChipBalance());
+        Assertions.assertEquals(0,jhon.getChipBalance());
     }
 }
