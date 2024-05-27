@@ -45,7 +45,7 @@ public class Deck{
     /**
      * updates the sum of the deck
      */
-    public void updateSum() {
+    private void updateSum() {
         sum = 0;
         for(int i = 0; i < deck.size(); i++){
             Card card = deck.get(i);
@@ -70,7 +70,7 @@ public class Deck{
         return new Card(deck.get(indexOfCard));
     }
 
-    public  void setCard(int indexOfCard, Card card){
+    public void setCard(int indexOfCard, Card card){
         if(indexOfCard < 0 || indexOfCard >= deck.size() ) {
             System.err.println("ERROR: Card at index " + indexOfCard+ " is out of range");
         }

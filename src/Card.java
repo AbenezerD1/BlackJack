@@ -1,12 +1,13 @@
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 public class Card {
     private BufferedImage image;
-    private CardValues cardVal = null;
+    private CardValues cardVal;
     private int cardSumValue;
-    private Suit suit = null;
+    private Suit suit;
 
     /**
      * Every card that is created gets to choose its value within 1-10
@@ -77,9 +78,13 @@ public class Card {
         this.cardSumValue = sumVal;
     }
 
+    public void draw(Graphics g,int x, int y){
+        g.drawImage(image,x,y,null);
+    }
+
     @Override
     public String toString() {
-        String result = "{Value: " + cardVal + ", Suit: " + suit +"}";
+        String result = cardVal + " of " + suit +"S";
         return result;
     }
 }
