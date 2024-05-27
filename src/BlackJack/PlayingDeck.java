@@ -46,6 +46,13 @@ public class PlayingDeck extends Deck {
         }
     }
 
+    public void flipCards() {
+        for(int i = 0; i < Size(); i++){
+            Card temp = getCard(i);
+            temp.flip();
+            setCard(i,temp);
+        }
+    }
     /**
      * shuffles cards in a random order
      */

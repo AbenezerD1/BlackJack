@@ -10,17 +10,17 @@ public class Dealer {
     private int numOfAces = 0;
 
     public Dealer(){
-        mainDeck = new PlayingDeck();
-        dealerHand = new Deck();
-        isTurn = false;
+        this.mainDeck = new PlayingDeck();
+        this.dealerHand = new Deck();
+        this.isTurn = false;
+        this.mainDeck.BuildPlayingDeck();
     }
     public Dealer(PlayingDeck mainDeck, Deck dealerDeck, boolean isTurn, int numOfAces) {
         this.mainDeck = mainDeck;
         this.dealerHand = dealerDeck;
         this.isTurn = isTurn;
         this.numOfAces = numOfAces;
-
-        mainDeck.BuildPlayingDeck();
+        this.mainDeck.BuildPlayingDeck();
     }
 
     public Dealer(Dealer other){
@@ -28,8 +28,7 @@ public class Dealer {
         this.dealerHand = other.dealerHand;
         this.isTurn = other.isTurn;
         this.numOfAces = other.numOfAces;
-
-        mainDeck.BuildPlayingDeck();
+        this.mainDeck.BuildPlayingDeck();
     }
 
     public Deck getMainDeck() {
@@ -43,6 +42,9 @@ public class Dealer {
         mainDeck = new PlayingDeck(other);
     }
 
+    public void flipMainDeck(){
+        mainDeck.flipCards();
+    }
     public Deck getDealerHand() {
         return dealerHand.getDeck();
     }
@@ -107,15 +109,13 @@ public class Dealer {
      * @param g
      * @param x
      * @param y
-     * @param spacingBetweenCards
      * @param cardScale
      */
-    public void drawMainDeck(Graphics g, int x, int y, int spacingBetweenCards, double cardScale){
-        ArrayList<Card> deck = mainDeck.getDeckList();
-        for(Card card: deck){
-            card.draw(g,x,y,cardScale);
-            x += 10;
-            y += 10;
+    public void drawMainDeck(Graphics g, int x, int y, double cardScale){
+        for(int i = 0; i < 2; i ++){
+            mainDeck.getCard(i).draw(g,x,y,cardScale);
+            x += 1;
+            y += 1;
         }
     }
 
