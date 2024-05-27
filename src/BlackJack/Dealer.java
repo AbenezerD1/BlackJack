@@ -1,5 +1,8 @@
 package BlackJack;
 
+import java.awt.*;
+import java.util.ArrayList;
+
 public class Dealer {
     private PlayingDeck mainDeck;
     private Deck dealerHand;
@@ -59,6 +62,14 @@ public class Dealer {
         isTurn = turn;
     }
 
+    public int getNumOfAces() {
+        return numOfAces;
+    }
+
+    public void setNumOfAces(int numOfAces) {
+        this.numOfAces = numOfAces;
+    }
+
     /**
      * Takes a card of the playing deck and returns it
      */
@@ -81,6 +92,31 @@ public class Dealer {
     public void resetMainDeck(){
         mainDeck = new PlayingDeck();
         mainDeck.BuildPlayingDeck();
+    }
+
+    public void drawDealerHand(Graphics g, int x, int y, int spacingBetweenCards, double cardScale){
+        ArrayList<Card> deck = dealerHand.getDeckList();
+        for(Card card: deck){
+            card.draw(g,x,y,cardScale);
+            x += card.getImage().getWidth()+spacingBetweenCards;
+        }
+    }
+
+    /**
+     * draws the main deck as a stacked cards
+     * @param g
+     * @param x
+     * @param y
+     * @param spacingBetweenCards
+     * @param cardScale
+     */
+    public void drawMainDeck(Graphics g, int x, int y, int spacingBetweenCards, double cardScale){
+        ArrayList<Card> deck = mainDeck.getDeckList();
+        for(Card card: deck){
+            card.draw(g,x,y,cardScale);
+            x += 10;
+            y += 10;
+        }
     }
 
     public String toString(){
