@@ -1,24 +1,23 @@
+package BlackJack;
+
 import java.awt.*;
 import java.util.ArrayList;
 
 public class Player{
     private Deck playerHand;
-    private int playerNum;
-    private boolean myTurn;
-
-
-
+    private static int playerNum;
+    private boolean isTurn;
     private int chipBalance = 0;
     public Player(int playerNum){
         setPlayerHand(new Deck());
         setPlayerNum(playerNum);
-        setMyTurn(false);
+        setTurn(false);
         this.chipBalance = 1000; //starts with 1000 chips
     }
     public Player(int playerNum, Deck deck, int chipBalance){
         setPlayerHand(deck);
         setPlayerNum(playerNum);
-        setMyTurn(false);
+        setTurn(false);
         this.chipBalance = chipBalance;
     }
     public Deck getPlayerHand() {
@@ -42,17 +41,17 @@ public class Player{
     public void setPlayerNum(int playerNum) {
         this.playerNum = playerNum;
     }
-    public boolean isMyTurn() {
-        return myTurn;
+    public boolean isTurn() {
+        return isTurn;
     }
-    public void setMyTurn(boolean myTurn) {
-        this.myTurn = myTurn;
+    public void setTurn(boolean turn) {
+        this.isTurn = turn;
     }
 
     /**
      * adds a card to the players deck
      * PRECONDITION: players turn
-     * POSTCONDITION: card added to deck
+     * POSTCONDITION: card is added to deck
      * @param card
      */
     public void hit(Card card){
@@ -70,7 +69,7 @@ public class Player{
             System.err.println("ERROR: Has to be a ace to update its value");
             return;
         }
-        //checks if it doesn't has the same suit as the ace being replaced
+        //checks if it doesn't have the same suit as the ace being replaced
         if(card.getSuit() != playerHand.getCard(indexOfAce).getSuit()){
             System.err.println("ERROR: Has to be a ace to update its value");
             return;
@@ -103,7 +102,7 @@ public class Player{
      * @param spacingBetweenCards
      */
     public void drawPlayerHand(Graphics g, int x, int y, int spacingBetweenCards, double cardScale){
-        ArrayList<Card> deck = playerHand.getDeck();
+        ArrayList<Card> deck = playerHand.getDeckList();
         for(Card card: deck){
             card.draw(g,x,y,cardScale);
             x += card.getImage().getWidth()+spacingBetweenCards;
