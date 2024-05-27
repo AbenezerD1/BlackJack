@@ -1,3 +1,5 @@
+package BlackJack;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -93,9 +95,39 @@ public class Card {
         cardFront = cardBack;
         cardBack = temp;
     }
+
+    /**
+     * checks if a card is an ace
+     * @param card
+     * @return
+     */
+    public boolean isAce(Card card){
+        if(card == null) return false;
+        if(card.cardVal != CardValues.ACE){
+            return false;
+        }
+        return true;
+    }
+    /**
+     * Equal if the card value, suits, and sum value are the same
+     * @param obj
+     * @return
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if(obj instanceof Card){
+            if(((Card) obj).cardVal == cardVal &&
+                    ((Card) obj).suit == suit &&
+                    ((Card) obj).cardSumValue == cardSumValue){
+               return true;
+            }
+        }
+        return false;
+    }
+
     @Override
     public String toString() {
-        if(cardVal.ordinal() > 0 && cardVal.ordinal() < 11){
+        if(cardVal.ordinal() > 0 && cardVal.ordinal() < 10){
             String result = ((cardVal.ordinal()+1) + "_of_" + suit +"S").toLowerCase();
             return result;
         }
