@@ -3,7 +3,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
 
 class DeckTest {
     Deck deck;
@@ -14,10 +13,10 @@ class DeckTest {
     @BeforeEach
     void setUp(){
         deck = new Deck();
-        card1 = new Card("./assets/2_of_clubs.png", CardValues.TWO, Suit.CLUB, 2);
-        card2 = new Card("./assets/7_of_hearts.png", CardValues.TWO, Suit.CLUB, 7);
-        card3 = new Card("./assets/9_of_spades.png", CardValues.TWO, Suit.CLUB, 9);
-        card4 = new Card("./assets/10_of_diamonds.png", CardValues.TWO, Suit.CLUB, 10);
+        card1 = new Card(CardValues.TWO, Suit.CLUB, 2);
+        card2 = new Card(CardValues.SEVEN, Suit.HEART, 7);
+        card3 = new Card(CardValues.NINE, Suit.SPADE, 9);
+        card4 = new Card(CardValues.QUEEN, Suit.DIAMOND, 10);
     }
 
     @AfterEach
@@ -31,6 +30,7 @@ class DeckTest {
     @Test
     void getSum() {
         Assertions.assertEquals(0,deck.getSum());
+
         deck.AddCard(card1);
         Assertions.assertEquals(2,deck.getSum());
         deck.AddCard(card2);
@@ -39,7 +39,7 @@ class DeckTest {
         Assertions.assertEquals(18,deck.getSum());
         deck.AddCard(card4);
         Assertions.assertEquals(28,deck.getSum());
-
+        System.out.println(deck);
         deck.RemoveCard(0);
         Assertions.assertEquals(26,deck.getSum());
         deck.RemoveCard(2);
