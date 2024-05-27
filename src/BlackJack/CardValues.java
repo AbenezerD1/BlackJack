@@ -1,3 +1,5 @@
+package BlackJack;
+
 public enum CardValues {
     ACE,
     TWO,
@@ -9,7 +11,7 @@ public enum CardValues {
     EIGHT,
     NINE,
     TEN,
-    JOKER,
+    JACK,
     QUEEN,
     KING
 }
