@@ -1,3 +1,5 @@
+package BlackJack;
+
 import java.util.ArrayList;
 
 public class Deck{
@@ -9,6 +11,7 @@ public class Deck{
      */
     public Deck(){
         setDeck(new ArrayList<>());
+        updateSum();
     }
 
     /**
@@ -16,23 +19,28 @@ public class Deck{
      */
     public Deck(ArrayList<Card> deck) {
         setDeck(deck);
+        updateSum();
     }
 
     /**
      * copies other deck into current deck
      */
     public Deck(Deck other){
-        setDeck(other.getDeck());
+        setDeck(other.getDeckList());
+        updateSum();
     }
 
     public int getSum(){
         return sum;
     }
 
-    public ArrayList<Card> getDeck() {
+    public ArrayList<Card> getDeckList() {
         return copyDeck(deck);
     }
 
+    public Deck getDeck() {
+        return new Deck(deck);
+    }
     /**
      * copies the deck and updates the sum in this deck
      * @param deck
@@ -52,6 +60,8 @@ public class Deck{
             sum += card.getCardSumValue();
         }
     }
+
+
 
     /**
      * gets a card to the deck
@@ -79,6 +89,11 @@ public class Deck{
             return;
         }
         deck.set(indexOfCard, new Card(card));
+        updateSum();
+    }
+
+    public int Size(){
+        return deck.size();
     }
 
     public void AddCard(Card card){
@@ -101,6 +116,25 @@ public class Deck{
     }
 
     /**
+     * Equal if every card is the same
+     * @param obj
+     * @return
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if(obj instanceof Deck){
+            if(((Deck) obj).Size() != Size()) return false;
+            for(int i=0; i < deck.size(); i++){
+                if(!((deck.get(i)).equals(((Deck) obj).getCard(i)))) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * prints each card along with the sum value in paranthesis
      * @return
      */
@@ -108,9 +142,9 @@ public class Deck{
     public String toString() {
         if(deck.size() <= 0 ) return "[]";
 
-        String toReturn = "[" + deck.get(0)+"("+deck.get(0).getCardSumValue()+")";
+        String toReturn = "[" + deck.get(0)+"("+deck.get(0).getCardSumValue()+")\n";
         for(int i = 1; i < deck.size(); i++){
-            toReturn += ", " + deck.get(i) + "("+deck.get(i).getCardSumValue()+")" ;
+            toReturn += ", " + deck.get(i) + "("+deck.get(i).getCardSumValue()+")\n" ;
         }
         return toReturn + "]";
     }
