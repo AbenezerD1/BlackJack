@@ -49,7 +49,7 @@ public class Deck{
         sum = 0;
         for(int i = 0; i < deck.size(); i++){
             Card card = deck.get(i);
-            sum += card.cardSumValue();
+            sum += card.getCardSumValue();
         }
     }
 
@@ -100,13 +100,17 @@ public class Deck{
         return temp;
     }
 
+    /**
+     * prints each card along with the sum value in paranthesis
+     * @return
+     */
     @Override
     public String toString() {
         if(deck.size() <= 0 ) return "[]";
 
-        String toReturn = "[" + deck.get(0);
+        String toReturn = "[" + deck.get(0)+"("+deck.get(0).getCardSumValue()+")";
         for(int i = 1; i < deck.size(); i++){
-            toReturn += ", " + deck.get(i) ;
+            toReturn += ", " + deck.get(i) + "("+deck.get(i).getCardSumValue()+")" ;
         }
         return toReturn + "]";
     }
