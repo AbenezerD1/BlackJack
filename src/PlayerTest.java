@@ -18,12 +18,12 @@ class PlayerTest {
     void setUp() {
         jhon = new Player(1,new Deck(),1000);
         deck = new Deck();
-        card1 = new Card("./assets/6_of_clubs.png", CardValues.SIX, Suit.CLUB, 6);
-        card2 = new Card("./assets/7_of_hearts.png", CardValues.SEVEN, Suit.HEART, 7);
-        card3 = new Card("./assets/5_of_spades.png", CardValues.FIVE, Suit.SPADE, 5);
-        card4 = new Card("./assets/10_of_diamonds.png", CardValues.TEN, Suit.DIAMOND, 10);
-        card5 = new Card("./assets/ace_of_spades.png", CardValues.ACE, Suit.SPADE, 10);
-        card6 = new Card("./assets/ace_of_spades.png", CardValues.ACE, Suit.SPADE, 1);
+        card1 = new Card(CardValues.SIX, Suit.CLUB, 6);
+        card2 = new Card(CardValues.SEVEN, Suit.HEART, 7);
+        card3 = new Card(CardValues.FIVE, Suit.SPADE, 5);
+        card4 = new Card(CardValues.TEN, Suit.DIAMOND, 10);
+        card5 = new Card(CardValues.ACE, Suit.SPADE, 10);
+        card6 = new Card(CardValues.ACE, Suit.SPADE, 1);
         deck.AddCard(card1);
         deck.AddCard(card2);
         deck.AddCard(card3);
@@ -56,7 +56,15 @@ class PlayerTest {
         jhon.setPlayerHand(deck);
         jhon.updateAceValue(4,card6);
         Card originalCard = jhon.getPlayerHand().getCard(4);
-        Assertions.assertEquals(1,originalCard.cardSumValue());
-        System.out.println(jhon);
+        assertEquals(1,originalCard.getCardSumValue());
+    }
+
+    @Test
+    void placeBet() {
+        jhon.placeBet(5000);
+        assertEquals(1000,jhon.getChipBalance());
+        jhon.placeBet(1000);
+        jhon.placeBet(1);
+        assertEquals(0,jhon.getChipBalance());
     }
 }
