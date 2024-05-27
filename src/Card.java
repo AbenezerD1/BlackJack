@@ -4,7 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 public class Card {
-    private BufferedImage image;
+    private BufferedImage cardFront;
+    private BufferedImage cardBack;
     private CardValues cardVal;
     private int cardSumValue;
     private Suit suit;
@@ -13,12 +14,11 @@ public class Card {
      * Every card that is created gets to choose its value within 1-10
      * BufferedImage is created using a file name with the extension in it
      *
-     * @param cardFileName
      * @param cardVal
      * @param suit
      * @param cardSumValue
      */
-    public Card(String cardFileName, CardValues cardVal, Suit suit, int cardSumValue) {
+    public Card(CardValues cardVal, Suit suit, int cardSumValue) {
         this.cardVal = cardVal;
         if(cardSumValue > 0 && cardSumValue < 11) {
             this.cardSumValue = cardSumValue;
@@ -28,9 +28,10 @@ public class Card {
         }
         this.suit = suit;
         try {
-            this.image = ImageIO.read(new File(cardFileName));
+            this.cardFront = ImageIO.read(new File("./assets/"+toString()+".png"));
+            this.cardBack = ImageIO.read(new File("./assets/Back.png"));
         } catch (IOException e) {
-            System.err.println("ERROR: Can't find " + cardFileName+ " image file");
+            System.err.println("ERROR: Can't find " + "./assets/"+toString()+".png"+ " image file");
             e.printStackTrace();
         }
     }
@@ -38,21 +39,23 @@ public class Card {
         this.cardVal = card.cardVal;
         this.cardSumValue = card.cardSumValue;
         this.suit = card.suit;
-        this.image = card.image;
+        this.cardFront = card.cardFront;
+        this.cardBack = card.cardBack;
     }
     /**
      * getters
      */
-    public BufferedImage image(){
-        return image;
+    public BufferedImage getImage(){
+        return cardFront;
     }
-    public CardValues cardVal(){
+
+    public CardValues getCardVal(){
         return cardVal;
     }
-    public int cardSumValue(){
+    public int getCardSumValue(){
         return  cardSumValue;
     }
-    public Suit suit(){
+    public Suit getSuit(){
         return suit;
     }
 
@@ -78,13 +81,25 @@ public class Card {
         this.cardSumValue = sumVal;
     }
 
-    public void draw(Graphics g,int x, int y){
-        g.drawImage(image,x,y,null);
+    public void draw(Graphics g,int x, int y,double scale){
+        int cardWidth = (int)(scale*cardFront.getWidth());
+        int cardHeight = (int)(scale*cardFront.getHeight());
+        Image tmp = cardFront.getScaledInstance(cardWidth, cardHeight, Image.SCALE_SMOOTH);
+        cardFront = new BufferedImage(cardWidth, cardHeight, BufferedImage.TYPE_INT_ARGB);
+        g.drawImage(tmp,x,y,null);
     }
-
+    public void flip(){
+        BufferedImage temp = cardFront;
+        cardFront = cardBack;
+        cardBack = temp;
+    }
     @Override
     public String toString() {
-        String result = cardVal + " of " + suit +"S";
+        if(cardVal.ordinal() > 0 && cardVal.ordinal() < 11){
+            String result = ((cardVal.ordinal()+1) + "_of_" + suit +"S").toLowerCase();
+            return result;
+        }
+        String result = (cardVal + "_of_" + suit +"S").toLowerCase();
         return result;
     }
 }
