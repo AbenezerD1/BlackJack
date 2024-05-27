@@ -1,9 +1,13 @@
 import java.awt.*;
+import java.util.ArrayList;
 
 public class Player{
     private Deck playerHand;
     private int playerNum;
     private boolean myTurn;
+
+
+
     private int chipBalance = 0;
     public Player(int playerNum){
         setPlayerHand(new Deck());
@@ -20,7 +24,9 @@ public class Player{
     public Deck getPlayerHand() {
         return new Deck(playerHand);
     }
-
+    public int getChipBalance() {
+        return chipBalance;
+    }
     public void setPlayerHand(Deck playerHand) {
         if (playerHand == null){
             System.err.println("ERROR: Can't set player hand since deck passed was null");
@@ -60,16 +66,16 @@ public class Player{
      * @return
      */
     public void updateAceValue(int indexOfAce, Card card){
-        if(card.cardVal() != CardValues.ACE){
+        if(card.getCardVal() != CardValues.ACE){
             System.err.println("ERROR: Has to be a ace to update its value");
             return;
         }
         //checks if it doesn't has the same suit as the ace being replaced
-        if(card.suit() != playerHand.getCard(indexOfAce).suit()){
+        if(card.getSuit() != playerHand.getCard(indexOfAce).getSuit()){
             System.err.println("ERROR: Has to be a ace to update its value");
             return;
         }
-        if((card.cardSumValue() != 1) && (card.cardSumValue() != 10)){
+        if((card.getCardSumValue() != 1) && (card.getCardSumValue() != 10)){
             System.err.println("ERROR: Can't update ace to a number that isn't either a 1 or a 10");
             return;
         }
@@ -77,16 +83,30 @@ public class Player{
         playerHand.setCard(indexOfAce, card);
     }
 
+    /**
+     * places a ber if bet is either greater than the chips balance or if it makes player go negative it returns false
+     * @param numOfChips
+     * @return
+     */
     public boolean placeBet(int numOfChips){
         if(chipBalance-numOfChips < 0) return false;
+        if(numOfChips > chipBalance) return false;
         chipBalance -= numOfChips;
         return true;
     }
 
-    public void drawPlayerHand(Graphics g, int x, int y, int spacingBetweenCards){
-        for(Card card: playerHand.getDeck()){
-            card.draw(g,x,y);
-            x += card.image().getWidth() + spacingBetweenCards;
+    /**
+     * renders a player's hand at a location x,y where x and y are the first cards top left corner
+     * @param g
+     * @param x
+     * @param y
+     * @param spacingBetweenCards
+     */
+    public void drawPlayerHand(Graphics g, int x, int y, int spacingBetweenCards, double cardScale){
+        ArrayList<Card> deck = playerHand.getDeck();
+        for(Card card: deck){
+            card.draw(g,x,y,cardScale);
+            x += card.getImage().getWidth()+spacingBetweenCards;
         }
     }
 
