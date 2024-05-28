@@ -1,24 +1,26 @@
 package BlackJack;
 
 import java.awt.*;
-import java.util.ArrayList;
 
-public class Dealer {
+public class Dealer implements Renderable{
     private PlayingDeck mainDeck;
     private Deck dealerHand;
-    private boolean isTurn;
+    private boolean isPlaying;
     private int numOfAces = 0;
 
     public Dealer(){
         this.mainDeck = new PlayingDeck();
         this.dealerHand = new Deck();
-        this.isTurn = false;
+        this.isPlaying = false;
         this.mainDeck.BuildPlayingDeck();
+
+        StateHandler.addTick(States.SINGLE_PLAYER,this);
+        StateHandler.addTick(States.TWO_PLAYER,this);
     }
-    public Dealer(PlayingDeck mainDeck, Deck dealerDeck, boolean isTurn, int numOfAces) {
+    public Dealer(PlayingDeck mainDeck, Deck dealerDeck, int numOfAces) {
         this.mainDeck = mainDeck;
         this.dealerHand = dealerDeck;
-        this.isTurn = isTurn;
+        this.isPlaying = false;
         this.numOfAces = numOfAces;
         this.mainDeck.BuildPlayingDeck();
     }
@@ -26,7 +28,7 @@ public class Dealer {
     public Dealer(Dealer other){
         this.mainDeck = other.mainDeck;
         this.dealerHand = other.dealerHand;
-        this.isTurn = other.isTurn;
+        this.isPlaying = other.isPlaying;
         this.numOfAces = other.numOfAces;
         this.mainDeck.BuildPlayingDeck();
     }
@@ -40,6 +42,10 @@ public class Dealer {
             System.err.println("ERROR: The playing deck can't be set to null");
         }
         mainDeck = new PlayingDeck(other);
+    }
+
+    public void shufflePlayingDeck(){
+        mainDeck.ShufflePlayingDeck();
     }
 
     public void flipMainDeck(){
@@ -56,12 +62,15 @@ public class Dealer {
         this.dealerHand = new Deck(dealerHand);
     }
 
-    public boolean isTurn() {
-        return isTurn;
+    public boolean isPlaying() {
+        if(dealerHand.getSum() > 14){
+            isPlaying = true;
+        }
+        return isPlaying;
     }
 
-    public void setTurn(boolean turn) {
-        isTurn = turn;
+    public void setPlaying(boolean playing) {
+        isPlaying = playing;
     }
 
     public int getNumOfAces() {
@@ -80,6 +89,7 @@ public class Dealer {
         if(cardToDeal == null){
             System.err.println("ERROR: Can't draw from a playing deck");
         }
+        cardToDeal.flip(); // flips card from deck then deals it
         return cardToDeal;
     }
 
@@ -88,6 +98,7 @@ public class Dealer {
             System.err.println("ERROR: Can't add null card");
             return;
         }
+        if(card.isAce()) numOfAces++;
         dealerHand.AddCard(card);
     }
 
@@ -97,10 +108,12 @@ public class Dealer {
     }
 
     public void drawDealerHand(Graphics g, int x, int y, int spacingBetweenCards, double cardScale){
-        ArrayList<Card> deck = dealerHand.getDeckList();
-        for(Card card: deck){
-            card.draw(g,x,y,cardScale);
-            x += card.getImage().getWidth()+spacingBetweenCards;
+        int imgWidth = (new Card(CardValues.ACE,Suit.CLUB, 1)).getImage().getWidth();
+        imgWidth = (int)((double)imgWidth*cardScale);
+        for(int i = 0; i < dealerHand.Size(); i++){
+            (dealerHand.getCard(i)).draw(g,x,y,cardScale);
+            x+=imgWidth+10;
+            //x += ((dealerHand.getCard(i)).getImage().getWidth())+spacingBetweenCards;
         }
     }
 
@@ -112,14 +125,25 @@ public class Dealer {
      * @param cardScale
      */
     public void drawMainDeck(Graphics g, int x, int y, double cardScale){
-        for(int i = 0; i < 2; i ++){
+        for(int i = 0; i < 5; i ++){
             mainDeck.getCard(i).draw(g,x,y,cardScale);
-            x += 1;
-            y += 1;
+            x += 5;
+            y -= 5;
         }
     }
 
     public String toString(){
         return "Dealer "+ ": " + dealerHand.toString();
+    }
+
+
+    /**
+     *draws the dealer and the main deck
+     */
+    @Override
+    public void render(Graphics g) {
+        //hard coded the location of dealers hand and the main deck
+        drawDealerHand(g,150,50,0,0.25);
+        drawMainDeck(g,800,50,0.25);
     }
 }

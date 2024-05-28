@@ -45,7 +45,7 @@ public class testUI {
             };
 
             for(int j = 0; j < players.length; j++){
-                for(int i = 0; i < c.length; i++){
+                for(int i = 0; i < 2; i++){
                     players[j].hit(c[i]);
                 }
             }
@@ -55,8 +55,9 @@ public class testUI {
             dealer.addCardToDealersDeck(c[1]);
             dealer.flipMainDeck();
 
-            players[0].drawPlayerHand(g,10,350,15,0.15);
-            players[1].drawPlayerHand(g,535,350,15,0.15);
+
+            players[0].drawPlayerHand(g,10,350,0.15);
+            players[1].drawPlayerHand(g,535,350,0.15);
             dealer.drawDealerHand(g,100,50,0,0.25);
             dealer.drawMainDeck(g,750,50,0.19);
         }

@@ -1,12 +1,12 @@
 package BlackJack;
 
 import java.awt.*;
-import java.util.ArrayList;
 
-public class Player{
+public class Player implements Renderable{
     private Deck playerHand;
-    private static int playerNum;
-    private boolean isTurn;
+    private int playerNum;
+    private boolean IsPlaying;
+    private int countAces = 0;
     private int chipBalance = 0;
     public Player(int playerNum){
         setPlayerHand(new Deck());
@@ -19,6 +19,9 @@ public class Player{
         setPlayerNum(playerNum);
         setTurn(false);
         this.chipBalance = chipBalance;
+
+        StateHandler.addTick(States.SINGLE_PLAYER,this);
+        StateHandler.addTick(States.TWO_PLAYER,this);
     }
     public Deck getPlayerHand() {
         return new Deck(playerHand);
@@ -42,10 +45,10 @@ public class Player{
         this.playerNum = playerNum;
     }
     public boolean isTurn() {
-        return isTurn;
+        return IsPlaying;
     }
     public void setTurn(boolean turn) {
-        this.isTurn = turn;
+        this.IsPlaying = turn;
     }
 
     /**
@@ -55,9 +58,13 @@ public class Player{
      * @param card
      */
     public void hit(Card card){
+        if(card.isAce()) countAces++;
         playerHand.AddCard(card);
     }
 
+    public int getCountAces() {
+        return countAces;
+    }
     /**
      * Lets player decide the value of an ace
      * @param indexOfAce
@@ -74,8 +81,8 @@ public class Player{
             System.err.println("ERROR: Has to be a ace to update its value");
             return;
         }
-        if((card.getCardSumValue() != 1) && (card.getCardSumValue() != 10)){
-            System.err.println("ERROR: Can't update ace to a number that isn't either a 1 or a 10");
+        if((card.getCardSumValue() != 1) && (card.getCardSumValue() != 11)){
+            System.err.println("ERROR: Can't update ace to a number that isn't either a 1 or a 11");
             return;
         }
         //swaps the ace with the provided ace
@@ -99,17 +106,27 @@ public class Player{
      * @param g
      * @param x
      * @param y
-     * @param spacingBetweenCards
      */
-    public void drawPlayerHand(Graphics g, int x, int y, int spacingBetweenCards, double cardScale){
-        ArrayList<Card> deck = playerHand.getDeckList();
-        for(Card card: deck){
-            card.draw(g,x,y,cardScale);
-            x += card.getImage().getWidth()+spacingBetweenCards;
+    public void drawPlayerHand(Graphics g, int x, int y, double cardScale){
+        int imgWidth = (new Card(CardValues.ACE,Suit.CLUB, 1)).getImage().getWidth();
+        imgWidth = (int)((double)imgWidth*cardScale);
+        for(int i = 0; i < playerHand.Size(); i++){
+            (playerHand.getCard(i)).draw(g,x,y,cardScale);
+            x+=imgWidth+10;
+            //x += ((dealerHand.getCard(i)).getImage().getWidth())+spacingBetweenCards;
         }
+    }
+
+    /**
+     */
+    @Override
+    public void render(Graphics g) {
+        drawPlayerHand(g,100,450,0.25);
     }
 
     public String toString(){
         return "Player "+playerNum+ ": " + playerHand.toString();
     }
+
+
 }

@@ -1,10 +1,10 @@
 package BlackJack;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import javax.imageio.ImageIO;
 public class Card {
     private BufferedImage cardFront;
     private BufferedImage cardBack;
@@ -22,7 +22,7 @@ public class Card {
      */
     public Card(CardValues cardVal, Suit suit, int cardSumValue) {
         this.cardVal = cardVal;
-        if(cardSumValue > 0 && cardSumValue < 11) {
+        if(cardSumValue > 0 && cardSumValue < 12) {
             this.cardSumValue = cardSumValue;
         }else{
             System.err.println("ERROR: Card Value " + cardSumValue + " is out of range");
@@ -86,6 +86,7 @@ public class Card {
     public void draw(Graphics g,int x, int y,double scale){
         int cardWidth = (int)(scale*cardFront.getWidth());
         int cardHeight = (int)(scale*cardFront.getHeight());
+        if(cardWidth == 0 || cardHeight == 0) return;
         Image tmp = cardFront.getScaledInstance(cardWidth, cardHeight, Image.SCALE_SMOOTH);
         cardFront = new BufferedImage(cardWidth, cardHeight, BufferedImage.TYPE_INT_ARGB);
         g.drawImage(tmp,x,y,null);
@@ -98,12 +99,12 @@ public class Card {
 
     /**
      * checks if a card is an ace
-     * @param card
+     * @param
      * @return
      */
-    public boolean isAce(Card card){
-        if(card == null) return false;
-        if(card.cardVal != CardValues.ACE){
+    public boolean isAce(){
+        if(this == null) return false;
+        if(this.cardVal != CardValues.ACE){
             return false;
         }
         return true;
