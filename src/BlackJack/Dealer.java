@@ -136,6 +136,7 @@ public class Dealer implements Renderable{
         return "Dealer "+ ": " + dealerHand.toString();
     }
 
+    //TODO: Adda a update method to handle if the dealer has finsihed his turn and the draw logic
 
     /**
      *draws the dealer and the main deck

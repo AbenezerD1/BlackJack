@@ -117,10 +117,12 @@ public class Player implements Renderable{
         }
     }
 
+    //TODO: Adda a update method to handle if the player has finsihed his turn and the draw logic
     /**
      */
     @Override
     public void render(Graphics g) {
+        //TODO: Add a check if state is two player and player number to correctly place the player
         drawPlayerHand(g,100,450,0.25);
     }
 

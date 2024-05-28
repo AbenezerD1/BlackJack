@@ -20,6 +20,11 @@ public class SinglePlayerMode {
         @Override
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
+
+            //TODO:use StateHandler to update the states instead updating states here
+            // could do that when dealer and player have both implemented the update methods
+            // when implemented just call StateHandler.update()
+
             // Draw a white horizontal line in the middle
             if(gameEnded) {
                 g.setColor(Color.RED);
@@ -30,7 +35,7 @@ public class SinglePlayerMode {
             if(playerWon){
                 g.setColor(Color.YELLOW);
                 g.setFont(new Font(Font.SERIF, Font.BOLD,50));
-                g.drawString("YOU WON", boardWidth/2-150,boardHeight/2);
+                g.drawString("YOU WON", boardWidth/2-150,boardHeight/2-10);
             }
             g.setColor(Color.WHITE);
             int midY = getHeight() / 2;
