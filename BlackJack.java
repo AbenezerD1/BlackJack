@@ -66,7 +66,8 @@ public class BlackJack {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // Start single player game logic here
-                JOptionPane.showMessageDialog(frame, "Single Player mode selected!");
+                new SinglePlayerMode();
+                frame.dispose();
             }
         });
 
@@ -74,7 +75,8 @@ public class BlackJack {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // Start two players game logic here
-                JOptionPane.showMessageDialog(frame, "Two Players mode selected!");
+                new TwoPlayerMode();
+                frame.dispose();
             }
         });
 
@@ -122,6 +124,10 @@ public class BlackJack {
         gbc.insets = new Insets(10, 0, 10, 0);
         gamePanel.add(buttonPanel, gbc);
     }
+
+
+
+
     }
 
 
