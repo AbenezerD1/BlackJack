@@ -30,8 +30,8 @@ public class Card {
         }
         this.suit = suit;
         try {
-            this.cardFront = ImageIO.read(new File("C:\\Users\\abene\\OneDrive\\Desktop\\CSS360\\BlackJack\\assets\\"+toString()+".png"));
-            this.cardBack = ImageIO.read(new File("C:\\Users\\abene\\OneDrive\\Desktop\\CSS360\\BlackJack\\assets\\Back.png"));
+            this.cardFront = ImageIO.read(new File("./assets/"+toString()+".png"));
+            this.cardBack = ImageIO.read(new File("./assets/Back.png"));
         } catch (IOException e) {
             System.err.println("ERROR: Can't find " + "./assets/"+toString()+".png"+ " image file");
             e.printStackTrace();
