@@ -1,6 +1,6 @@
 package BlackJack;
 
-public enum CardValues {
+public enum CardNumber {
     ACE,
     TWO,
     THREE,

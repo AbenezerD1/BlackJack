@@ -8,22 +8,11 @@ public class Player implements Renderable{
     private boolean IsPlaying;
     private int countAces = 0;
     private int chipBalance = 0;
-    private int drawHandX=0, drawHandY=0;
-    private double scaleCards=0;
-
-    public Player(int playerNum,int drawHandX, int drawHandY, double scaleCards){
-        setDrawHandPosition(drawHandX,drawHandY);
-        setDrawHandScale(scaleCards);
+    public Player(int playerNum){
         setPlayerHand(new Deck());
         setPlayerNum(playerNum);
         setTurn(false);
         this.chipBalance = 1000; //starts with 1000 chips
-
-        if(StateHandler.currentState == States.SINGLE_PLAYER){
-            StateHandler.addTick(States.SINGLE_PLAYER,this);
-        }else if (StateHandler.currentState == States.TWO_PLAYER){
-            StateHandler.addTick(States.TWO_PLAYER,this);
-        }
     }
     public Player(int playerNum, Deck deck, int chipBalance){
         setPlayerHand(deck);
@@ -31,11 +20,8 @@ public class Player implements Renderable{
         setTurn(false);
         this.chipBalance = chipBalance;
 
-        if(StateHandler.currentState == States.SINGLE_PLAYER){
-            StateHandler.addTick(States.SINGLE_PLAYER,this);
-        }else if (StateHandler.currentState == States.TWO_PLAYER){
-            StateHandler.addTick(States.TWO_PLAYER,this);
-        }
+        StateHandler.addTick(States.SINGLE_PLAYER,this);
+        StateHandler.addTick(States.TWO_PLAYER,this);
     }
     public Deck getPlayerHand() {
         return new Deck(playerHand);
@@ -64,13 +50,7 @@ public class Player implements Renderable{
     public void setTurn(boolean turn) {
         this.IsPlaying = turn;
     }
-    public void setDrawHandPosition(int x, int y){
-        this.drawHandX = x;
-        this.drawHandY = y;
-    }
-    public void setDrawHandScale(double scale){
-        this.scaleCards = scale;
-    }
+
     /**
      * adds a card to the players deck
      * PRECONDITION: players turn
@@ -92,7 +72,7 @@ public class Player implements Renderable{
      * @return
      */
     public void updateAceValue(int indexOfAce, Card card){
-        if(card.getCardVal() != CardValues.ACE){
+        if(card.getCardNum() != CardNumber.ACE){
             System.err.println("ERROR: Has to be a ace to update its value");
             return;
         }
@@ -101,7 +81,7 @@ public class Player implements Renderable{
             System.err.println("ERROR: Has to be a ace to update its value");
             return;
         }
-        if((card.getCardSumValue() != 1) && (card.getCardSumValue() != 11)){
+        if((card.getCardPointValue() != 1) && (card.getCardPointValue() != 11)){
             System.err.println("ERROR: Can't update ace to a number that isn't either a 1 or a 11");
             return;
         }
@@ -128,9 +108,9 @@ public class Player implements Renderable{
      * @param y
      */
     public void drawPlayerHand(Graphics g, int x, int y, double cardScale){
-        int imgWidth = (new Card(CardValues.ACE,Suit.CLUB, 1)).getImage().getWidth();
+        int imgWidth = (new Card(CardNumber.ACE,Suit.CLUB, 1)).getCardFrontImage().getWidth();
         imgWidth = (int)((double)imgWidth*cardScale);
-        for(int i = 0; i < playerHand.Size(); i++){
+        for(int i = 0; i < playerHand.size(); i++){
             (playerHand.getCard(i)).draw(g,x,y,cardScale);
             x+=imgWidth+10;
             //x += ((dealerHand.getCard(i)).getImage().getWidth())+spacingBetweenCards;
@@ -140,7 +120,19 @@ public class Player implements Renderable{
     //TODO: Adda a update method to handle if the player has finsihed his turn and the draw logic
     @Override
     public void update() {
+        /**
+         * POSSIBILITIES
+         * 1. Player has cards that are under 21
+         * 2. Player gotten card that makes over 21
+         *
+         */
 
+
+        if(playerHand.getSum() > 21){
+            StateHandler.currentState = States.PLAYER_LOST;
+        } else if (playerHand.getSum() == 21) {
+
+        }
     }
 
     /**
@@ -148,7 +140,7 @@ public class Player implements Renderable{
     @Override
     public void render(Graphics g) {
         //TODO: Add a check if state is two player and player number to correctly place the player
-        drawPlayerHand(g,drawHandX,drawHandY,scaleCards);
+        drawPlayerHand(g,100,450,0.25);
     }
 
     public String toString(){

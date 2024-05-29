@@ -3,16 +3,23 @@ package BlackJack;
 import java.util.ArrayList;
 import java.util.Random;
 
+/**
+ * Creates a playing deck by extending functionalities of a Deck ||
+ *
+ * Contains methods:
+ * getters: getCard(), getDeck(), getDeckList(), getSum()  ||
+ * setters: setDeck(ArrayList<Card>),setCard(Card) ||
+ * member functions: size(), AddCard(Card), RemoveCard(int), equals(card), toString()  ||
+ * PlayingDeck methods: BuildPlayingDeck(), flipCards(), drawFromPlayingDeck()
+ */
 public class PlayingDeck extends Deck {
 
     public PlayingDeck() {
         super();
     }
-
     public PlayingDeck(ArrayList<Card> deck) {
         super(deck);
     }
-
     public PlayingDeck(PlayingDeck other) {
         super(other.getDeckList());
     }
@@ -23,7 +30,7 @@ public class PlayingDeck extends Deck {
      * @param val
      * @return
      */
-    public int defineCardValue(CardValues val){
+    private int defineCardValue(CardNumber val){
          if((val.ordinal()+1) < 11){
              return val.ordinal() + 1;
          }
@@ -33,21 +40,25 @@ public class PlayingDeck extends Deck {
     /**
      * adds a full 52 card deck to the deck
      * PRECONDITION: deck is empty
+     * POSTCONDITION: creates a full ordered deck of playing cards
      */
     public void BuildPlayingDeck(){
         if(getDeckList().size() != 0) {
             System.err.println("ERROR: Can only build playing deck from an empty deck");
             return;
         }
-        for(int i =0; i < CardValues.values().length; i++){
+        for(int i = 0; i < CardNumber.values().length; i++){
             for(int j = 0; j < Suit.values().length; j++){
-                AddCard(new Card(CardValues.values()[i],Suit.values()[j],defineCardValue(CardValues.values()[i])));
+                AddCard(new Card(CardNumber.values()[i],Suit.values()[j],defineCardValue(CardNumber.values()[i])));
             }
         }
     }
 
+    /**
+     * flips all playing cards in the playing deck upside down
+     */
     public void flipCards() {
-        for(int i = 0; i < Size(); i++){
+        for(int i = 0; i < size(); i++){
             Card temp = getCard(i);
             temp.flip();
             setCard(i,temp);
@@ -55,6 +66,9 @@ public class PlayingDeck extends Deck {
     }
     /**
      * shuffles cards in a random order
+     *
+     * PRECONDITION: contains a standard playing deck with 52 cards
+     * POSTCONDITION: shuffled playing deck
      */
     public void ShufflePlayingDeck(){
         Random r = new Random();
@@ -71,11 +85,11 @@ public class PlayingDeck extends Deck {
      * @param otherIndex
      */
     private void swapCardInDeck(int thisIndex, int otherIndex) {
-        if(thisIndex < 0 || thisIndex > Size()) {
+        if(thisIndex < 0 || thisIndex > size()) {
             System.err.println("ERROR: this index is out of bounds, couldn't swap cards");
             return;
         }
-        if(otherIndex < 0 || otherIndex > Size()) {
+        if(otherIndex < 0 || otherIndex > size()) {
             System.err.println("ERROR: other index is out of bounds, couldn't swap cards");
             return;
         }
@@ -89,7 +103,7 @@ public class PlayingDeck extends Deck {
      * @return
      */
     public Card drawFromPlayingDeck(){
-        if(Size() != 0) return RemoveCard(Size()-1);
+        if(size() != 0) return RemoveCard(size()-1);
         return null;
     }
 }

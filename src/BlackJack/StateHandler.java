@@ -44,7 +44,6 @@ public class StateHandler {
         }
     }
 
-
     public static void render(Graphics g){
         switch (currentState){
             case SINGLE_PLAYER:

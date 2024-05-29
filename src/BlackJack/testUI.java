@@ -37,11 +37,11 @@ public class testUI {
             Dealer dealer = new Dealer(150,50,0.25);
             Deck deck = new Deck();
             Card[] c = {
-                    new Card(CardValues.SIX, Suit.CLUB, 6),
-                    new Card(CardValues.SEVEN, Suit.HEART, 7),
-                    new Card(CardValues.FIVE, Suit.SPADE, 5),
-                    new Card(CardValues.TEN, Suit.DIAMOND, 10),
-                    new Card(CardValues.ACE, Suit.SPADE, 10),
+                    new Card(CardNumber.SIX, Suit.CLUB, 6),
+                    new Card(CardNumber.SEVEN, Suit.HEART, 7),
+                    new Card(CardNumber.FIVE, Suit.SPADE, 5),
+                    new Card(CardNumber.TEN, Suit.DIAMOND, 10),
+                    new Card(CardNumber.ACE, Suit.SPADE, 10),
             };
 
             for(int j = 0; j < players.length; j++){

@@ -3,16 +3,18 @@ package BlackJack;
 import java.awt.*;
 
 public class Dealer implements Renderable{
-    private PlayingDeck mainDeck;
-    private Deck dealerHand;
-    private boolean isPlaying;
-    private int numOfAces = 0;
-    private int drawHandX=0, drawHandY=0;
-    private double cardScale=0;
+    private PlayingDeck mainDeck; //the playing deck that dealer uses to deal cards
+    private Deck dealerHand; //the dealer's hand
+    private boolean isPlaying; //if the dealer has lost yet
+    private int numOfAces = 0; //number of aces the dealer has
 
-    public Dealer(int handX, int handY,double scaleCards){
-        setDrawHandPosition(handX,handY);
-        setDrawHandScale(scaleCards);
+    /**
+     * Creates a shuffled standard playing deck with 52 cards, sets dealer hand to empty deck, sets dealer isPlaying to true
+     * and adds them to adds single player and two player renderable array list
+     *
+     * PRECONDITION: none
+     */
+    public Dealer(){
         this.mainDeck = new PlayingDeck();
         this.dealerHand = new Deck();
         this.isPlaying = true;
@@ -21,15 +23,18 @@ public class Dealer implements Renderable{
         StateHandler.addTick(States.SINGLE_PLAYER,this);
         StateHandler.addTick(States.TWO_PLAYER,this);
     }
+    /**
+     * Creates a shuffled standard playing deck with 52 cards, sets dealer hand to empty deck, sets dealer isPlaying to true
+     * and adds them to adds single player and two player renderable array list
+     *
+     * PRECONDITION: none
+     */
     public Dealer(PlayingDeck mainDeck, Deck dealerDeck, int numOfAces) {
         this.mainDeck = mainDeck;
         this.dealerHand = dealerDeck;
-        this.isPlaying = true;
+        this.isPlaying = false;
         this.numOfAces = numOfAces;
         this.mainDeck.BuildPlayingDeck();
-
-        StateHandler.addTick(States.SINGLE_PLAYER,this);
-        StateHandler.addTick(States.TWO_PLAYER,this);
     }
 
     public Dealer(Dealer other){
@@ -38,9 +43,6 @@ public class Dealer implements Renderable{
         this.isPlaying = other.isPlaying;
         this.numOfAces = other.numOfAces;
         this.mainDeck.BuildPlayingDeck();
-
-        StateHandler.addTick(States.SINGLE_PLAYER,this);
-        StateHandler.addTick(States.TWO_PLAYER,this);
     }
 
     public Deck getMainDeck() {
@@ -73,11 +75,7 @@ public class Dealer implements Renderable{
     }
 
     public boolean isPlaying() {
-        if(dealerHand.getSum() >= 17){
-            isPlaying = true;
-            return isPlaying;
-        }
-        return false;
+        return isPlaying;
     }
 
     public void setPlaying(boolean playing) {
@@ -118,18 +116,10 @@ public class Dealer implements Renderable{
         mainDeck.BuildPlayingDeck();
     }
 
-    public void setDrawHandPosition(int x, int y){
-        this.drawHandX = x;
-        this.drawHandY = y;
-    }
-    public void setDrawHandScale(double scale){
-        this.cardScale = scale;
-    }
-
     public void drawDealerHand(Graphics g, int x, int y, int spacingBetweenCards, double cardScale){
-        int imgWidth = (new Card(CardValues.ACE,Suit.CLUB, 1)).getImage().getWidth();
+        int imgWidth = (new Card(CardNumber.ACE,Suit.CLUB, 1)).getCardFrontImage().getWidth();
         imgWidth = (int)((double)imgWidth*cardScale);
-        for(int i = 0; i < dealerHand.Size(); i++){
+        for(int i = 0; i < dealerHand.size(); i++){
             (dealerHand.getCard(i)).draw(g,x,y,cardScale);
             x+=imgWidth+10;
             //x += ((dealerHand.getCard(i)).getImage().getWidth())+spacingBetweenCards;
@@ -144,10 +134,10 @@ public class Dealer implements Renderable{
      * @param cardScale
      */
     public void drawMainDeck(Graphics g, int x, int y, double cardScale){
-        for(int i = 0; i < 5; i ++){
+        for(int i = 0; i < 10; i ++){
             mainDeck.getCard(i).draw(g,x,y,cardScale);
-            x += 5;
-            y -= 5;
+            x -= 1;
+            y -= 1;
         }
     }
 
@@ -156,23 +146,20 @@ public class Dealer implements Renderable{
     }
 
     //TODO: Adda a update method to handle if the dealer has finsihed his turn and the draw logic
-
     @Override
     public void update() {
-        if(dealerHand.getSum() >= 17){
+        if(dealerHand.getSum() > 17){
             isPlaying = false;
         }
     }
-    public void revealCards() {
-        dealerHand.getCard(0).flip();
-     }
+
     /**
      *draws the dealer and the main deck
      */
     @Override
     public void render(Graphics g) {
         //hard coded the location of dealers hand and the main deck
-        drawDealerHand(g,drawHandX,drawHandY,0,cardScale);
+        drawDealerHand(g,150,50,0,0.25);
         drawMainDeck(g,800,50,0.25);
     }
 }

@@ -15,10 +15,10 @@ class DeckTest {
     @BeforeEach
     void setUp(){
         deck = new Deck();
-        card1 = new Card(CardValues.TWO, Suit.CLUB, 2);
-        card2 = new Card(CardValues.SEVEN, Suit.HEART, 7);
-        card3 = new Card(CardValues.NINE, Suit.SPADE, 9);
-        card4 = new Card(CardValues.QUEEN, Suit.DIAMOND, 10);
+        card1 = new Card(CardNumber.TWO, Suit.CLUB, 2);
+        card2 = new Card(CardNumber.SEVEN, Suit.HEART, 7);
+        card3 = new Card(CardNumber.NINE, Suit.SPADE, 9);
+        card4 = new Card(CardNumber.QUEEN, Suit.DIAMOND, 10);
     }
 
     @AfterEach
