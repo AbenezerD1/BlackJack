@@ -14,8 +14,8 @@ public class SinglePlayerMode {
     JFrame frame = new JFrame("Single Player Mode");
     private boolean gameEnded = false;
     private boolean playerWon = false;
-    private Player player = new Player(1,new Deck(),1000);
-    private Dealer dealer = new Dealer();
+    private Player player;
+    private Dealer dealer;
     JPanel gamePanel = new JPanel() {
         @Override
         protected void paintComponent(Graphics g) {
@@ -25,7 +25,6 @@ public class SinglePlayerMode {
             // could do that when dealer and player have both implemented the update methods
             // when implemented just call StateHandler.update()
 
-            // Draw a white horizontal line in the middle
             if(gameEnded) {
                 g.setColor(Color.RED);
                 g.setFont(new Font(Font.SERIF, Font.BOLD,50));
@@ -37,6 +36,8 @@ public class SinglePlayerMode {
                 g.setFont(new Font(Font.SERIF, Font.BOLD,50));
                 g.drawString("YOU WON", boardWidth/2-150,boardHeight/2-10);
             }
+
+            //Draw a white horizontal line in the middle
             g.setColor(Color.WHITE);
             int midY = getHeight() / 2;
             g.drawLine(0,boardHeight/2,boardWidth,boardHeight/2);
@@ -66,6 +67,11 @@ public class SinglePlayerMode {
 
     private void initializeUI() {
         // Initialize UI components if needed
+        StateHandler.currentState = States.SINGLE_PLAYER;
+
+        player = new Player(1,100,450,0.25);
+        dealer = new Dealer(150,50,0.25);
+
         dealer.flipMainDeck();
         dealer.shufflePlayingDeck();
 
@@ -77,7 +83,6 @@ public class SinglePlayerMode {
         player.hit(dealer.dealcard());
         player.hit(dealer.dealcard());
 
-        StateHandler.currentState = States.SINGLE_PLAYER;
     }
 
     private void addComponentsToPanel() {
@@ -129,31 +134,32 @@ public class SinglePlayerMode {
 
                 //TODO:Fix game logic so no bugs when enforcing the rule of the game
                 Card toDeal = dealer.dealcard();
-                Deck testDeck = player.getPlayerHand();
-                testDeck.AddCard(toDeal);
-                //checks if
-                if(toDeal.isAce()){
-                    testDeck.AddCard(toDeal);
-                    if(testDeck.getSum() > 21){
-                        testDeck.setCard(testDeck.Size()-1,new Card(toDeal.getCardVal(),toDeal.getSuit(),1));
-                    }else{
-                        testDeck.setCard(testDeck.Size()-1,new Card(toDeal.getCardVal(),toDeal.getSuit(),11));
-                    }
-                }
-
-                if((testDeck.getSum() > 21) && dealer.isPlaying() == false){
-                    gameEnded = true;
-                    return;
-                }else if((testDeck.getSum() > 21)){
-                    hitButton.setEnabled(false);
-                    return;
-                }else if(testDeck.getSum() == 21){
-                    playerWon = true;
-                    hitButton.setEnabled(false);
-                    return;
-                }
+//                Deck testDeck = player.getPlayerHand();
+//                testDeck.AddCard(toDeal);
+//                //checks if
+//                if(toDeal.isAce()){
+//                    testDeck.AddCard(toDeal);
+//                    if(testDeck.getSum() > 21){
+//                        testDeck.setCard(testDeck.Size()-1,new Card(toDeal.getCardVal(),toDeal.getSuit(),1));
+//                    }else{
+//                        testDeck.setCard(testDeck.Size()-1,new Card(toDeal.getCardVal(),toDeal.getSuit(),11));
+//                    }
+//                }
+//
+//                if((testDeck.getSum() > 21) && dealer.isPlaying() == false){
+//                    gameEnded = true;
+//                    return;
+//                }else if((testDeck.getSum() > 21)){
+//                    hitButton.setEnabled(false);
+//                    return;
+//                }else if(testDeck.getSum() == 21){
+//                    playerWon = true;
+//                    hitButton.setEnabled(false);
+//                    return;
+//                }
 
                 player.hit(toDeal);
+                StateHandler.update();
             }
         });
         gamePanel.add(hitButton);
@@ -174,6 +180,7 @@ public class SinglePlayerMode {
                     return;
                 }
                 dealer.addCardToDealersDeck(toDeal);
+                StateHandler.update();
             }
         });
         gamePanel.add(standButton);

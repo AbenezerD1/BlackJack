@@ -34,7 +34,7 @@ public class testUI {
                     new Player(1,new Deck(),1000),
                     new Player(2,new Deck(),1000),
             };
-            Dealer dealer = new Dealer();
+            Dealer dealer = new Dealer(150,50,0.25);
             Deck deck = new Deck();
             Card[] c = {
                     new Card(CardValues.SIX, Suit.CLUB, 6),

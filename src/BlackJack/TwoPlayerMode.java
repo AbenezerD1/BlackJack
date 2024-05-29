@@ -2,6 +2,8 @@ package BlackJack;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class TwoPlayerMode {
     // Window dimensions
@@ -10,6 +12,9 @@ public class TwoPlayerMode {
 
     // Main frame and panel
     JFrame frame = new JFrame("Two Player Mode");
+    private Player player1;
+    private Player player2;
+    private Dealer dealer;
     JPanel gamePanel = new JPanel() {
         @Override
         protected void paintComponent(Graphics g) {
@@ -22,6 +27,8 @@ public class TwoPlayerMode {
             // Draw a white vertical line in the middle of the bottom half
             int midX = getWidth() / 2;
             g.drawLine(midX, midY, midX, getHeight());
+            StateHandler.render(g);
+            repaint();
         }
     };
 
@@ -43,6 +50,25 @@ public class TwoPlayerMode {
 
     private void initializeUI() {
         // Initialize UI components if needed
+        StateHandler.currentState = States.TWO_PLAYER;
+
+        player1 = new Player(1,10,500,0.15);
+        player2 = new Player(2,510,500,0.15);
+        dealer = new Dealer(150,50,0.25);
+
+        dealer.flipMainDeck();
+        dealer.shufflePlayingDeck();
+
+        Card toDeal = dealer.dealcard();
+        toDeal.flip();
+        dealer.addCardToDealersDeck(toDeal);
+        dealer.addCardToDealersDeck(dealer.dealcard());
+
+        player1.hit(dealer.dealcard());
+        player1.hit(dealer.dealcard());
+
+        player2.hit(dealer.dealcard());
+        player2.hit(dealer.dealcard());
     }
 
     private void addComponentsToPanel() {
@@ -80,12 +106,35 @@ public class TwoPlayerMode {
         // Create Hit and Stand buttons for Player 1
         JButton hitButton1 = new JButton("Hit");
         hitButton1.setBounds(boardWidth / 4 - 150, boardHeight - 130, 80, 30);
-        hitButton1.addActionListener(e -> JOptionPane.showMessageDialog(frame, "Player 1 Hit action triggered!"));
+        hitButton1.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Card toDeal = dealer.dealcard();
+                player1.hit(toDeal);
+                StateHandler.update();
+            }
+        });
         gamePanel.add(hitButton1);
 
         JButton standButton1 = new JButton("Stand");
         standButton1.setBounds(boardWidth / 4 + 70, boardHeight - 130, 80, 30);
-        standButton1.addActionListener(e -> JOptionPane.showMessageDialog(frame, "Player 1 Stand action triggered!"));
+        standButton1.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Start single player game logic here
+
+                //TODO:Fix game logic so no bugs when enforcing the rule of the game
+                Card toDeal = dealer.dealcard();
+                Deck testDeck = dealer.getDealerHand();
+                testDeck.AddCard(toDeal);
+                //checks if adding this card will make dealer go above 14
+                if(!dealer.isPlaying()){
+                    return;
+                }
+                dealer.addCardToDealersDeck(toDeal);
+                StateHandler.update();
+            }
+        });
         gamePanel.add(standButton1);
 
         // Create the title and Bet box for Player 2
@@ -115,12 +164,35 @@ public class TwoPlayerMode {
         // Create Hit and Stand buttons for Player 2
         JButton hitButton2 = new JButton("Hit");
         hitButton2.setBounds(3 * boardWidth / 4 - 150, boardHeight - 130, 80, 30);
-        hitButton2.addActionListener(e -> JOptionPane.showMessageDialog(frame, "Player 2 Hit action triggered!"));
+        hitButton2.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Card toDeal = dealer.dealcard();
+                player2.hit(toDeal);
+                StateHandler.update();
+            }
+        });
         gamePanel.add(hitButton2);
 
         JButton standButton2 = new JButton("Stand");
         standButton2.setBounds(3 * boardWidth / 4 + 70, boardHeight - 130, 80, 30);
-        standButton2.addActionListener(e -> JOptionPane.showMessageDialog(frame, "Player 2 Stand action triggered!"));
+        standButton2.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Start single player game logic here
+
+                //TODO:Fix game logic so no bugs when enforcing the rule of the game
+                Card toDeal = dealer.dealcard();
+                Deck testDeck = dealer.getDealerHand();
+                testDeck.AddCard(toDeal);
+                //checks if adding this card will make dealer go above 14
+                if(!dealer.isPlaying()){
+                    return;
+                }
+                dealer.addCardToDealersDeck(toDeal);
+                StateHandler.update();
+            }
+        });
         gamePanel.add(standButton2);
     }
 

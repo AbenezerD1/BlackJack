@@ -24,6 +24,27 @@ public class StateHandler {
         }
     }
 
+    public static void update(){
+        switch (currentState){
+            case SINGLE_PLAYER:
+                //single player elements
+                for(Renderable r: singlePlayer){
+                    r.update();
+                }
+                break;
+            case TWO_PLAYER:
+                //two player elements
+                for(Renderable r: twoPlayer){
+                    r.update();
+                }
+                break;
+            default:
+                System.err.println("ERROR: Undefined state");
+                break;
+        }
+    }
+
+
     public static void render(Graphics g){
         switch (currentState){
             case SINGLE_PLAYER:

@@ -11,7 +11,14 @@ public class BlackJack {
     int boardHeight = boardWidth;
 
     JFrame frame = new JFrame("BlackJack");
-    JPanel gamePanel = new JPanel();
+    JPanel gamePanel = new JPanel() {
+        @Override
+        public void paintComponent(Graphics g){
+            super.paintComponent(g);
+            revalidate();
+            repaint();
+        }
+    };
 
 
     public BlackJack() {
@@ -20,7 +27,7 @@ public class BlackJack {
         frame.setVisible(true);
         frame.setSize(boardWidth, boardHeight);
         frame.setLocationRelativeTo(null);
-        frame.setResizable(false);
+        frame.setResizable(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         gamePanel.setLayout(new GridBagLayout());

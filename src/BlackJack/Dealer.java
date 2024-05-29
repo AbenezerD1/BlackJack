@@ -7,11 +7,15 @@ public class Dealer implements Renderable{
     private Deck dealerHand;
     private boolean isPlaying;
     private int numOfAces = 0;
+    private int drawHandX=0, drawHandY=0;
+    private double cardScale=0;
 
-    public Dealer(){
+    public Dealer(int handX, int handY,double scaleCards){
+        setDrawHandPosition(handX,handY);
+        setDrawHandScale(scaleCards);
         this.mainDeck = new PlayingDeck();
         this.dealerHand = new Deck();
-        this.isPlaying = false;
+        this.isPlaying = true;
         this.mainDeck.BuildPlayingDeck();
 
         StateHandler.addTick(States.SINGLE_PLAYER,this);
@@ -20,9 +24,12 @@ public class Dealer implements Renderable{
     public Dealer(PlayingDeck mainDeck, Deck dealerDeck, int numOfAces) {
         this.mainDeck = mainDeck;
         this.dealerHand = dealerDeck;
-        this.isPlaying = false;
+        this.isPlaying = true;
         this.numOfAces = numOfAces;
         this.mainDeck.BuildPlayingDeck();
+
+        StateHandler.addTick(States.SINGLE_PLAYER,this);
+        StateHandler.addTick(States.TWO_PLAYER,this);
     }
 
     public Dealer(Dealer other){
@@ -31,6 +38,9 @@ public class Dealer implements Renderable{
         this.isPlaying = other.isPlaying;
         this.numOfAces = other.numOfAces;
         this.mainDeck.BuildPlayingDeck();
+
+        StateHandler.addTick(States.SINGLE_PLAYER,this);
+        StateHandler.addTick(States.TWO_PLAYER,this);
     }
 
     public Deck getMainDeck() {
@@ -107,6 +117,14 @@ public class Dealer implements Renderable{
         mainDeck.BuildPlayingDeck();
     }
 
+    public void setDrawHandPosition(int x, int y){
+        this.drawHandX = x;
+        this.drawHandY = y;
+    }
+    public void setDrawHandScale(double scale){
+        this.cardScale = scale;
+    }
+
     public void drawDealerHand(Graphics g, int x, int y, int spacingBetweenCards, double cardScale){
         int imgWidth = (new Card(CardValues.ACE,Suit.CLUB, 1)).getImage().getWidth();
         imgWidth = (int)((double)imgWidth*cardScale);
@@ -138,13 +156,20 @@ public class Dealer implements Renderable{
 
     //TODO: Adda a update method to handle if the dealer has finsihed his turn and the draw logic
 
+    @Override
+    public void update() {
+        if(dealerHand.getSum() > 17){
+            isPlaying = false;
+        }
+    }
+
     /**
      *draws the dealer and the main deck
      */
     @Override
     public void render(Graphics g) {
         //hard coded the location of dealers hand and the main deck
-        drawDealerHand(g,150,50,0,0.25);
+        drawDealerHand(g,drawHandX,drawHandY,0,cardScale);
         drawMainDeck(g,800,50,0.25);
     }
 }
