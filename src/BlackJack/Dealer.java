@@ -73,10 +73,11 @@ public class Dealer implements Renderable{
     }
 
     public boolean isPlaying() {
-        if(dealerHand.getSum() > 14){
+        if(dealerHand.getSum() >= 17){
             isPlaying = true;
+            return isPlaying;
         }
-        return isPlaying;
+        return false;
     }
 
     public void setPlaying(boolean playing) {
@@ -158,11 +159,13 @@ public class Dealer implements Renderable{
 
     @Override
     public void update() {
-        if(dealerHand.getSum() > 17){
+        if(dealerHand.getSum() >= 17){
             isPlaying = false;
         }
     }
-
+    public void revealCards() {
+        dealerHand.getCard(0).flip();
+     }
     /**
      *draws the dealer and the main deck
      */
