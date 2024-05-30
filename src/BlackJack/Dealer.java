@@ -105,7 +105,7 @@ public class Dealer implements Renderable{
     public int getNumOfAces() {
         return numOfAces;
     }
-    public int reducedDealerAce(){
+    public int reducedDealerAceSum(){
         int dealerHandSum = dealerHand.getSum();
         int aces = getNumOfAces();
         while(dealerHandSum > 21 && aces > 0){
@@ -334,7 +334,7 @@ public class Dealer implements Renderable{
     @Override
     public void update() {
         if(dealerHand.getSum() >= 17){
-            if(reducedDealerAce() > 21){
+            if(reducedDealerAceSum() > 21){
                 lost = true;
                 return;
             }
