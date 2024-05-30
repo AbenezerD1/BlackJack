@@ -162,6 +162,10 @@ public class Player implements Renderable{
         chipBalance -= numOfChips;
         return true;
     }
+    public void setNumOfChips(int numOfChips){
+        if(numOfChips < 0) return;
+        chipBalance = numOfChips;
+    }
     /**
      * Lets player decide the value of an ace
      * @param indexOfAce
@@ -213,6 +217,11 @@ public class Player implements Renderable{
         }
     }
 
+    public void drawCurrentBet(Graphics g, int x, int y){
+        g.setColor(Color.YELLOW);
+        g.setFont(new Font(Font.SERIF,Font.BOLD, 25));
+        g.drawString("Chip Balance: "+chipBalance,x,y);
+    }
     //TODO: Adda a update method to handle if the player has finsihed his turn and the draw logic
     @Override
     public void update() {
@@ -227,6 +236,7 @@ public class Player implements Renderable{
     public void render(Graphics g) {
         //TODO: Add a check if state is two player and player number to correctly place the player
         drawPlayerHand(g, drawHandX, drawHandY, cardScale);
+        drawCurrentBet(g,50,750);
     }
 
     public String toString(){
