@@ -179,11 +179,12 @@ public class SinglePlayerMode {
                 playerTurnOver = true;
 
                 // Dealer's turn logic
-                while (!dealer.isPlaying()) {
+                while (dealer.isPlaying()) {
                     Card toDeal = dealer.dealcard();
                     // Deck testDeck = dealer.getDealerHand();
                     //testDeck.AddCard(toDeal);
                     dealer.addCardToDealerHand(toDeal);
+                    dealer.update();
                     // Check if dealer has reached the threshold (usually 17)
 
                 }
