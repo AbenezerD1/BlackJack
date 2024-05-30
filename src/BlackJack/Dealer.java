@@ -18,6 +18,7 @@ public class Dealer implements Renderable{
     private PlayingDeck mainDeck; //the playing deck that dealer uses to deal cards
     private Deck dealerHand; //the dealer's hand
     private boolean isPlaying = true; //if the dealer has lost yet
+    private boolean lost = false;
     private int numOfAces = 0; //number of aces the dealer has
     private int dealerHandX = 0, dealerHandY = 0; //location where dealer hand is drawn
     private double cardScale = 0.25; //scale of the card
@@ -79,6 +80,9 @@ public class Dealer implements Renderable{
     }
 
     //GETTERS
+    public boolean getDealerLost(){
+        return lost;
+    }
     /**
      * returns a deep copy of this playing deck
      *
@@ -100,6 +104,15 @@ public class Dealer implements Renderable{
      */
     public int getNumOfAces() {
         return numOfAces;
+    }
+    public int reducedPlayerAce(){
+        int dealerHandSum = dealerHand.getSum();
+        int aces = getNumOfAces();
+        while(dealerHandSum > 21 && aces > 0){
+            dealerHandSum -= 10;
+            aces -= 1;
+        }
+        return dealerHandSum;
     }
     /**
      * @return dealers hand
@@ -195,7 +208,9 @@ public class Dealer implements Renderable{
         }
         this.cardScale = cardScale;
     }
-
+    public void setDealerLost(boolean lost){
+        this.lost = lost;
+    }
     //ACTIONS/HELPERS
     /**
      * shuffles playing deck
@@ -319,6 +334,10 @@ public class Dealer implements Renderable{
     @Override
     public void update() {
         if(dealerHand.getSum() >= 17){
+            if(dealerHand.getSum() > 21){
+                lost = true;
+                return;
+            }
             isPlaying = false;
         }
     }
