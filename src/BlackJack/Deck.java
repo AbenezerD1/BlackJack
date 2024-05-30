@@ -14,6 +14,7 @@ public class Deck{
     private ArrayList<Card> deck;
     private int sum;
 
+    //CONSTRUCTORS
     /**
      * Creates an empty deck
      */
@@ -43,6 +44,8 @@ public class Deck{
         setDeck(other.getDeckList());
         updateSum();
     }
+
+    //GETTERS
     public int getSum(){
         return sum;
     }
@@ -83,26 +86,7 @@ public class Deck{
         return new Deck(deck);
     }
 
-    /**
-     * copies the deck and updates the current deck with the copy
-     * @param deck
-     */
-    public void setDeck(ArrayList<Card> deck) {
-        this.deck = copyDeck(deck);
-        updateSum();
-    }
-
-    /**
-     * updates the sum of the deck using the cards point value
-     */
-    private void updateSum() {
-        sum = 0;
-        for(int i = 0; i < deck.size(); i++){
-            Card card = deck.get(i);
-            sum += card.getCardPointValue();
-        }
-    }
-
+    //SETTERS
     /**
      * set a card to the deck
      *
@@ -122,7 +106,26 @@ public class Deck{
         deck.set(indexOfCard, new Card(card));
         updateSum();
     }
+    /**
+     * copies the deck and updates the current deck with the copy
+     * @param deck
+     */
+    public void setDeck(ArrayList<Card> deck) {
+        this.deck = copyDeck(deck);
+        updateSum();
+    }
 
+    //ACTIONS/HELPERS
+    /**
+     * updates the sum of the deck using the cards point value
+     */
+    private void updateSum() {
+        sum = 0;
+        for(int i = 0; i < deck.size(); i++){
+            Card card = deck.get(i);
+            sum += card.getCardPointValue();
+        }
+    }
     /**
      * returns the size of the deck
      * @return

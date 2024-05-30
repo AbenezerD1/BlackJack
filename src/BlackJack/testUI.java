@@ -51,15 +51,14 @@ public class testUI {
             }
 
             c[0].flip();
-            dealer.addCardToDealersDeck(c[0]);
-            dealer.addCardToDealersDeck(c[1]);
+            dealer.addCardToDealerHand(c[0]);
+            dealer.addCardToDealerHand(c[1]);
             dealer.flipMainDeck();
 
 
             players[0].drawPlayerHand(g,10,350,0.15);
             players[1].drawPlayerHand(g,535,350,0.15);
-            dealer.drawDealerHand(g,100,50,0,0.25);
-            dealer.drawMainDeck(g,750,50,0.19);
+            dealer.render(g);
         }
     }
 }

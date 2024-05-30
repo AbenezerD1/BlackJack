@@ -4,31 +4,97 @@ import java.awt.*;
 
 public class Player implements Renderable{
     private Deck playerHand;
-    private int playerNum;
-    private boolean IsPlaying;
-    private int countAces = 0;
+    private int playerNum; //player number if using multiplayer
+    private boolean isPlaying; //if player is able to draw cards
+    private int countAces = 0; // number of aces a player has
     private int chipBalance = 0;
-    public Player(int playerNum){
+    private int drawHandX=0, drawHandY=0; //position of where the players hand is being drawn
+    private double cardScale=0.25; //size of the players cards
+
+    //CONSTRUCTORS
+
+    /**
+     * PRECONDITION: player number is above 0, x and y of player hand is greater than zero, and card scale is greater than zero
+     * @param playerNum player number
+     * @param drawHandX x location of the player hand
+     * @param drawHandY y location of the player hand
+     * @param cardScale scale of the card
+     */
+    public Player(int playerNum, int drawHandX, int drawHandY, double cardScale){
+        setDrawHandPosition(drawHandX,drawHandY);
+        setDrawHandScale(cardScale);
         setPlayerHand(new Deck());
         setPlayerNum(playerNum);
-        setTurn(false);
+        setTurn(true);
         this.chipBalance = 1000; //starts with 1000 chips
+
+        //adds player to correct state's renederable elements so it can be rendered by state handler
+        if(StateHandler.currentState == States.SINGLE_PLAYER){
+            StateHandler.addRenderableElement(States.SINGLE_PLAYER,this);
+        }else if (StateHandler.currentState == States.TWO_PLAYER){
+            StateHandler.addRenderableElement(States.TWO_PLAYER,this);
+        }
     }
+
+    /**
+     * uses a given player number, deck, and chip balance to create a player
+     * @param playerNum player number that is greater than zero
+     * @param deck deck that is not null
+     * @param chipBalance
+     */
     public Player(int playerNum, Deck deck, int chipBalance){
         setPlayerHand(deck);
         setPlayerNum(playerNum);
-        setTurn(false);
+        setTurn(true);
         this.chipBalance = chipBalance;
 
-        StateHandler.addTick(States.SINGLE_PLAYER,this);
-        StateHandler.addTick(States.TWO_PLAYER,this);
+        //adds player to correct state's renederable elements so it can be rendered by state handler
+        if(StateHandler.currentState == States.SINGLE_PLAYER){
+            StateHandler.addRenderableElement(States.SINGLE_PLAYER,this);
+        }else if (StateHandler.currentState == States.TWO_PLAYER){
+            StateHandler.addRenderableElement(States.TWO_PLAYER,this);
+        }
     }
+
+    //GETTERS
+
+    /**
+     * @return current players hand as a deck of cards
+     */
     public Deck getPlayerHand() {
         return new Deck(playerHand);
     }
+    /**
+     * @return current players chip balance
+     */
     public int getChipBalance() {
         return chipBalance;
     }
+    /**
+     * @return current players number
+     */
+    public int getPlayerNum() {
+        return playerNum;
+    }
+    /**
+     * @return current players number of aces in  players hand
+     */
+    public int getCountAces() {
+        return countAces;
+    }
+    /**
+     * @return if player is still able to draw cards
+     */
+    public boolean isTurn() {
+        return isPlaying;
+    }
+
+    //SETTERS
+
+    /**
+     * sets player hand to a given deck of cards
+     * @param playerHand a deck of cards that isn't null
+     */
     public void setPlayerHand(Deck playerHand) {
         if (playerHand == null){
             System.err.println("ERROR: Can't set player hand since deck passed was null");
@@ -37,20 +103,40 @@ public class Player implements Renderable{
         this.playerHand = new Deck(playerHand);
     }
 
-    public int getPlayerNum() {
-        return playerNum;
-    }
-
+    /**
+     * sets player number using a given player number
+     * @param playerNum
+     */
     public void setPlayerNum(int playerNum) {
         this.playerNum = playerNum;
     }
-    public boolean isTurn() {
-        return IsPlaying;
-    }
+
+    /**
+     * @param turn change whether the player can draw cards
+     */
     public void setTurn(boolean turn) {
-        this.IsPlaying = turn;
+        this.isPlaying = turn;
     }
 
+    /**
+     * adjusts the location of the players hand using the given x,y coordinates
+     * @param x value of the location of the players hand
+     * @param y value of the location of the players hand
+     */
+    public void setDrawHandPosition(int x, int y){
+        this.drawHandX = x;
+        this.drawHandY = y;
+    }
+
+    /**
+     * sets the scale of players cards
+     * @param scale size of players cards
+     */
+    public void setDrawHandScale(double scale){
+        this.cardScale = scale;
+    }
+
+    //ACTIONS/HELPERS
     /**
      * adds a card to the players deck
      * PRECONDITION: players turn
@@ -61,14 +147,21 @@ public class Player implements Renderable{
         if(card.isAce()) countAces++;
         playerHand.AddCard(card);
     }
-
-    public int getCountAces() {
-        return countAces;
+    /**
+     * places a ber if bet is either greater than the chips balance or if it makes player go negative it returns false
+     * @param numOfChips
+     * @return
+     */
+    public boolean placeBet(int numOfChips){
+        if(chipBalance-numOfChips < 0) return false;
+        if(numOfChips > chipBalance) return false;
+        chipBalance -= numOfChips;
+        return true;
     }
     /**
      * Lets player decide the value of an ace
      * @param indexOfAce
-     * @param card
+     * @param card a new ace with the value you want to replace it with
      * @return
      */
     public void updateAceValue(int indexOfAce, Card card){
@@ -89,23 +182,12 @@ public class Player implements Renderable{
         playerHand.setCard(indexOfAce, card);
     }
 
-    /**
-     * places a ber if bet is either greater than the chips balance or if it makes player go negative it returns false
-     * @param numOfChips
-     * @return
-     */
-    public boolean placeBet(int numOfChips){
-        if(chipBalance-numOfChips < 0) return false;
-        if(numOfChips > chipBalance) return false;
-        chipBalance -= numOfChips;
-        return true;
-    }
-
+    //RENDERING
     /**
      * renders a player's hand at a location x,y where x and y are the first cards top left corner
-     * @param g
-     * @param x
-     * @param y
+     * @param g Graphics object
+     * @param x coordinate of player hand
+     * @param y coordinate of player hand
      */
     public void drawPlayerHand(Graphics g, int x, int y, double cardScale){
         int imgWidth = (new Card(CardNumber.ACE,Suit.CLUB, 1)).getCardFrontImage().getWidth();
@@ -129,7 +211,7 @@ public class Player implements Renderable{
 
 
         if(playerHand.getSum() > 21){
-            StateHandler.currentState = States.PLAYER_LOST;
+            isPlaying = false;
         } else if (playerHand.getSum() == 21) {
 
         }
@@ -140,7 +222,7 @@ public class Player implements Renderable{
     @Override
     public void render(Graphics g) {
         //TODO: Add a check if state is two player and player number to correctly place the player
-        drawPlayerHand(g,100,450,0.25);
+        drawPlayerHand(g,drawHandX,drawHandY,cardScale);
     }
 
     public String toString(){

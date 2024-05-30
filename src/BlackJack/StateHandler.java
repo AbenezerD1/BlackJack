@@ -7,7 +7,7 @@ public class StateHandler {
     private static  ArrayList<Renderable> singlePlayer = new ArrayList<>();
     private static  ArrayList<Renderable> twoPlayer = new ArrayList<>();
 
-    public static void addTick(States state, Renderable r){
+    public static void addRenderableElement(States state, Renderable r){
         if(r == null ) return;
         switch (state){
             case SINGLE_PLAYER:
