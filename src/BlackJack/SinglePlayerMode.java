@@ -10,8 +10,6 @@ public class SinglePlayerMode {
     int boardWidth = 1000;
     int boardHeight = 800;
 
-    private static SinglePlayerMode game;
-
     // Main frame and panel
     JFrame frame = new JFrame("Single Player Mode");
     private boolean dealerWon = false, draw = false;
@@ -49,7 +47,8 @@ public class SinglePlayerMode {
                 playAgain.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        game = new SinglePlayerMode();
+                        StateHandler.clearElements();
+                        new SinglePlayerMode();
                     }
                 });
                 gamePanel.add(playAgain);
@@ -226,7 +225,7 @@ public class SinglePlayerMode {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                game = new SinglePlayerMode();
+                new SinglePlayerMode();
             }
         });
     }

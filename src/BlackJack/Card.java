@@ -37,8 +37,8 @@ public class Card {
 
         //assigning card image to appropriate card from assets
         try {
-            this.cardFront = ImageIO.read(new File("./assets/"+toString()+".png"));
-            this.cardBack = ImageIO.read(new File("./assets/Back.png"));
+            this.cardFront = ImageIO.read(new File("./BlackJack/assets/"+toString()+".png"));
+            this.cardBack = ImageIO.read(new File("./BlackJack/assets/Back.png"));
         } catch (IOException e) {
             System.err.println("ERROR: Can't find " + "./assets/"+toString()+".png"+ " image file");
             e.printStackTrace();

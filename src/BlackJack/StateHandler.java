@@ -42,7 +42,7 @@ public class StateHandler {
                 System.err.println("ERROR: Undefined state");
                 break;
         }
-    }
+}
 
     public static void render(Graphics g){
         switch (currentState){
@@ -56,6 +56,25 @@ public class StateHandler {
                 //two player elements
                 for(Renderable r: twoPlayer){
                     r.render(g);
+                }
+                break;
+            default:
+                System.err.println("ERROR: Undefined state");
+                break;
+        }
+    }
+    public static void clearElements(){
+        switch (currentState){
+            case SINGLE_PLAYER:
+                //single player elements
+                for(int i = 0 ; i < singlePlayer.size(); i++){
+                    singlePlayer.remove(0);
+                }
+                break;
+            case TWO_PLAYER:
+                //two player elements
+                for(int i = 0 ; i < twoPlayer.size(); i++){
+                    twoPlayer.remove(0);
                 }
                 break;
             default:
