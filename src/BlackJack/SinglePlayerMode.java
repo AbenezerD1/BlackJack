@@ -22,31 +22,35 @@ public class SinglePlayerMode {
         @Override
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
-
-            if(dealerWon){
+            if(playerTurnOver){
                 g.setColor(Color.RED);
                 g.setFont(new Font(Font.SERIF, Font.BOLD,50));
-                g.drawString("BUSTED", boardWidth/2-150,boardHeight/2-10);
+                g.drawString("BUSTED", boardWidth/2-150,boardHeight/2 + 43);
+            }else if(dealerWon){
+                g.setColor(Color.RED);
+                g.setFont(new Font(Font.SERIF, Font.BOLD,50));
+                g.drawString("PLAYER LOST", boardWidth/2-150,boardHeight/2 + 43);
             }
             if(playerWon){
                 g.setColor(Color.YELLOW);
                 g.setFont(new Font(Font.SERIF, Font.BOLD,50));
-                g.drawString("YOU WON", boardWidth/2-150,boardHeight/2-10);
+                g.drawString("YOU WON", boardWidth/2-150,boardHeight/2 + 43);
             }
-
             if(draw){
                 g.setColor(Color.BLUE);
                 g.setFont(new Font(Font.SERIF, Font.BOLD,50));
-                g.drawString("DRAW", boardWidth/2-150,boardHeight/2-10);
+                g.drawString("PUSH", boardWidth/2-150,boardHeight/2 + 43);
             }
-            if(dealerWon || playerWon || draw){
+            if(playerTurnOver|| dealerWon || playerWon || draw){
                 JButton playAgain = new JButton("Play Again");
                 playAgain.setBackground(Color.WHITE);
                 playAgain.setBorderPainted(true);
-                playAgain.setBounds(boardWidth / 2 - 50, boardHeight/2 , 100, 50);
+                playAgain.setBounds(boardWidth / 2 +250, boardHeight/2 , 100, 40);
                 playAgain.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
+                        player = new Player(1,100,450,0.25);
+                        dealer = new Dealer(50,50,0.25);
                         StateHandler.clearElements();
                         new SinglePlayerMode();
                     }
@@ -188,6 +192,7 @@ public class SinglePlayerMode {
                 int dealerDistanceFrom21 = Math.abs(dealer.reducedDealerAceSum() - 21);
 
                 if(!player.isPlaying()){
+                    playerTurnOver = true;
                     //player has card sum over 21
                     dealerWon = true;
                 }else if(dealer.getDealerLost()){
