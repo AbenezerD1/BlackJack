@@ -15,7 +15,9 @@ public class TwoPlayerMode {
     private Player player1;
     private Player player2;
     private Dealer dealer;
+    private boolean gameOver = false, player1Finsihed = false, player2Finsihed = false;
     private boolean player1Won,player2Won,dealerWon,draw;
+    private int playerBet1,playerBet2;
 
     JPanel gamePanel = new JPanel() {
         @Override
@@ -26,31 +28,39 @@ public class TwoPlayerMode {
             int midY = getHeight() / 2;
             g.drawLine(0, midY, getWidth(), midY);
 
-            if(dealerWon){
-                g.setColor(Color.RED);
-                g.setFont(new Font(Font.SERIF, Font.BOLD,50));
-                g.drawString("BUSTED", boardWidth/2-150,boardHeight/2-10);
-            }
-            if(player1Won){
-                g.setColor(Color.YELLOW);
-                g.setFont(new Font(Font.SERIF, Font.BOLD,50));
-                g.drawString("PLAYER 1 WON", boardWidth/2-150,boardHeight/2-10);
-            }
-            if(player2Won){
-                g.setColor(Color.YELLOW);
-                g.setFont(new Font(Font.SERIF, Font.BOLD,50));
-                g.drawString("PLAYER 2 WON", boardWidth/2-150,boardHeight/2-10);
-            }
-            if(draw){
-                g.setColor(Color.BLUE);
-                g.setFont(new Font(Font.SERIF, Font.BOLD,50));
-                g.drawString("DRAW", boardWidth/2-150,boardHeight/2);
-            }
-
-
             // Draw a white vertical line in the middle of the bottom half
             int midX = getWidth() / 2;
             g.drawLine(midX, midY, midX, getHeight());
+
+            if(gameOver){
+                if (dealerWon) {
+                    g.setColor(Color.RED);
+                    g.setFont(new Font(Font.SERIF, Font.BOLD, 50));
+                    g.drawString("BUSTED", boardWidth / 2 - 150, boardHeight / 2 - 50);
+                }
+                if (player1Won) {
+                    g.setColor(Color.YELLOW);
+                    g.setFont(new Font(Font.SERIF, Font.BOLD, 50));
+                    g.drawString("PLAYER 1 WON", boardWidth / 2 - 150, boardHeight / 2 - 50);
+                }
+                if (player2Won) {
+                    g.setColor(Color.YELLOW);
+                    g.setFont(new Font(Font.SERIF, Font.BOLD, 50));
+                    g.drawString("PLAYER 2 WON", boardWidth / 2 - 150, boardHeight / 2 - 50);
+                }
+                if (draw) {
+                    g.setColor(Color.BLUE);
+                    g.setFont(new Font(Font.SERIF, Font.BOLD, 50));
+                    g.drawString("DRAW", boardWidth / 2 - 150, boardHeight / 2 - 50);
+                }
+
+                JButton playAgain = new JButton("Play Again");
+                playAgain.setBackground(Color.WHITE);
+                playAgain.setBorderPainted(true);
+                playAgain.setBounds(boardWidth / 2 - 50, boardHeight/2 - 35, 100, 50);
+                gamePanel.add(playAgain);
+
+            }
 
             StateHandler.render(g);
             repaint();
@@ -97,6 +107,13 @@ public class TwoPlayerMode {
     }
 
     private void addComponentsToPanel() {
+        //play again button
+        if(gameOver){
+            JButton playAgain = new JButton("Play Again");
+            playAgain.setBounds(boardWidth / 2 - 70, boardHeight - 130, 80, 30);
+            gamePanel.add(playAgain);
+        }
+
         // Create the Dealer label
         JLabel dealerLabel = new JLabel("Dealer", SwingConstants.CENTER);
         dealerLabel.setForeground(Color.WHITE);
@@ -122,7 +139,21 @@ public class TwoPlayerMode {
 
         JTextField betField1 = new JTextField();
         betField1.setHorizontalAlignment(JTextField.CENTER);
+        betField1.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(player1.getChipBalance() == 0) {
+                    betField1.setEnabled(false);
+                    return;
+                }
+                int betAmount = Integer.parseInt(betField1.getText());
+                playerBet1 = betAmount;
 
+                player1.placeBet(betAmount);
+                betField1.setEnabled(false);
+                StateHandler.update();
+            }
+        });
         betPanel1.add(betLabel1, BorderLayout.NORTH);
         betPanel1.add(betField1, BorderLayout.CENTER);
 
@@ -134,8 +165,13 @@ public class TwoPlayerMode {
         hitButton1.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Card toDeal = dealer.dealcard();
-                player1.hit(toDeal);
+                //if player card sum is over 21
+                if(!player1.isPlaying()) {
+                    hitButton1.setEnabled(false);
+                    betField1.setEnabled(false);
+                    return;
+                }
+                player1.hit(dealer.dealcard());
                 StateHandler.update();
             }
         });
@@ -146,21 +182,85 @@ public class TwoPlayerMode {
         standButton1.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Start single player game logic here
-
-                //TODO:Fix game logic so no bugs when enforcing the rule of the game
-                Card toDeal = dealer.dealcard();
-                Deck testDeck = dealer.getDealerHand();
-                testDeck.AddCard(toDeal);
-                //checks if adding this card will make dealer go above 14
-                if(!dealer.isPlaying()){
+                //if player two is finished their turn
+                player1Finsihed = true;
+                standButton1.setEnabled(false);
+                hitButton1.setEnabled(false);
+                if(!player2Finsihed) {
                     return;
                 }
-                dealer.addCardToDealerHand(toDeal);
+                gameOver = true;
+                //if player two lost
+                dealer.flipHiddenCard();
+
+                // Dealer's turn logic
+                while (dealer.isPlaying()) {
+                    Card toDeal = dealer.dealcard();
+                    // Deck testDeck = dealer.getDealerHand();
+                    //testDeck.AddCard(toDeal);
+                    dealer.addCardToDealerHand(toDeal);
+                    StateHandler.update();
+                    // Check if dealer has reached the threshold (usually 17)
+                }
+                int player1DistanceFrom21 = Math.abs(player1.reducedPlayerAceSum() - 21);
+                int player2DistanceFrom21 = Math.abs(player2.reducedPlayerAceSum() - 21);
+                int dealerDistanceFrom21 = Math.abs(dealer.reducedDealerAceSum() - 21);
+
+                if (!player1.isPlaying() && !player2.isPlaying()) {
+                    //if both players have reduced card sum over 21
+                    dealerWon = true;
+                } else if (player1.isPlaying() && player2.isPlaying() && dealer.getDealerLost()) {
+                    //if both players cards are under 21 and dealer has reduced ace card sum over 21
+                    if (player1DistanceFrom21 < player2DistanceFrom21) {
+                        //if player one has card sum closer to 21
+                        player1Won = true;
+                        player1.setNumOfChips(player1.getChipBalance() + 2 * playerBet1);
+                    } else if (player1DistanceFrom21 > player2DistanceFrom21) {
+                        //if player two has card sum closer to 21
+                        player2Won = true;
+                        player2.setNumOfChips(player2.getChipBalance() + 2 * playerBet2);
+                    } else {
+                        draw = true;
+                        player1.setNumOfChips(player1.getChipBalance() + playerBet1);
+                        player2.setNumOfChips(player2.getChipBalance() + playerBet2);
+                    }
+                } else if (!dealer.getDealerLost() && player1.isPlaying()) {
+                    //if dealer and player 1 have cards below 21 and player 2 lost
+                    if (dealerDistanceFrom21 > player1DistanceFrom21) {
+                        //if player one has card sum closer to 21
+                        player1Won = true;
+                        player1.setNumOfChips(player1.getChipBalance() + 2 * playerBet1);
+                    } else if (player1DistanceFrom21 > dealerDistanceFrom21) {
+                        //if dealer card sum is closer to 21
+                        dealerWon = true;
+                    } else {
+                        draw = true;
+                        player1.setNumOfChips(player1.getChipBalance() + 2 * playerBet1);
+                    }
+                } else if (!dealer.getDealerLost() && player2.isPlaying()) {
+                    //if dealer and player 1 have cards below 21 and player 2 lost
+                    if (dealerDistanceFrom21 > player2DistanceFrom21) {
+                        //if player one has card sum closer to 21
+                        player2Won = true;
+                        player2.setNumOfChips(player2.getChipBalance() + 2 * playerBet2);
+                    } else if (player2DistanceFrom21 > dealerDistanceFrom21) {
+                        //if dealer card sum is closer to 21
+                        dealerWon = true;
+                    } else {
+                        draw = true;
+                        player2.setNumOfChips(player2.getChipBalance() + 2 * playerBet2);
+                    }
+
+                }
+                // Disable the stand and hit buttons after standing
+                standButton1.setEnabled(false);
+                hitButton1.setEnabled(false);
+                betField1.setEnabled(false);
                 StateHandler.update();
             }
         });
         gamePanel.add(standButton1);
+
 
         // Create the title and Bet box for Player 2
         JLabel player2Label = new JLabel("Player 2", SwingConstants.CENTER);
@@ -180,7 +280,21 @@ public class TwoPlayerMode {
 
         JTextField betField2 = new JTextField();
         betField2.setHorizontalAlignment(JTextField.CENTER);
+        betField2.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(player2.getChipBalance() == 0) {
+                    betField2.setEnabled(false);
+                    return;
+                }
+                int betAmount = Integer.parseInt(betField2.getText());
+                playerBet2 = betAmount;
 
+                player2.placeBet(betAmount);
+                betField2.setEnabled(false);
+                StateHandler.update();
+            }
+        });
         betPanel2.add(betLabel2, BorderLayout.NORTH);
         betPanel2.add(betField2, BorderLayout.CENTER);
 
@@ -192,8 +306,13 @@ public class TwoPlayerMode {
         hitButton2.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Card toDeal = dealer.dealcard();
-                player2.hit(toDeal);
+                //if player card sum is over 21
+                if(!player2.isPlaying()) {
+                    hitButton2.setEnabled(false);
+                    betField2.setEnabled(false);
+                    return;
+                }
+                player2.hit(dealer.dealcard());
                 StateHandler.update();
             }
         });
@@ -204,23 +323,64 @@ public class TwoPlayerMode {
         standButton2.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Start single player game logic here
-
-                //TODO:Fix game logic so no bugs when enforcing the rule of the game
-                Card toDeal = dealer.dealcard();
-                Deck testDeck = dealer.getDealerHand();
-                testDeck.AddCard(toDeal);
-                //checks if adding this card will make dealer go above 14
-                if(!dealer.isPlaying()){
+                player2Finsihed = true;
+                standButton2.setEnabled(false);
+                hitButton2.setEnabled(false);
+                if(!player1Finsihed) {
                     return;
                 }
-                dealer.addCardToDealerHand(toDeal);
+                gameOver = true;
+                //if player one lost
+                dealer.flipHiddenCard();
+
+                // Dealer's turn logic
+                while (dealer.isPlaying()) {
+                    Card toDeal = dealer.dealcard();
+                    // Deck testDeck = dealer.getDealerHand();
+                    //testDeck.AddCard(toDeal);
+                    dealer.addCardToDealerHand(toDeal);
+                    StateHandler.update();
+                    // Check if dealer has reached the threshold (usually 17)
+                }
+                gameOver = true;
+
+                int player1DistanceFrom21 = Math.abs(player1.reducedPlayerAceSum() - 21);
+                int player2DistanceFrom21 = Math.abs(player2.reducedPlayerAceSum() - 21);
+                int dealerDistanceFrom21 = Math.abs(dealer.reducedDealerAceSum() - 21);
+
+                if(!player2.isPlaying()){
+                    //player has card sum over 21
+                    dealerWon = true;
+                }else if(dealer.getDealerLost()){
+                    //dealer has card sum over 21
+                    player1Won = true;
+                    player2.setNumOfChips(player2.getChipBalance()+2* playerBet2);
+                    StateHandler.update();
+                } else if (player2DistanceFrom21 == dealerDistanceFrom21){
+                    //player and dealer has same sum
+                    draw = true;
+                    player2.setNumOfChips(player2.getChipBalance()+ playerBet2);
+                    StateHandler.update();
+                }else if(player2DistanceFrom21 < dealerDistanceFrom21){
+                    //player closer to 21
+                    player2Won = true;
+                    player2.setNumOfChips(player2.getChipBalance()+2* playerBet2);
+                    StateHandler.update();
+                }else if(player2DistanceFrom21 > dealerDistanceFrom21){
+                    //dealer closer to 21
+                    dealerWon = true;
+                }
+
+                // Disable the stand and hit buttons after standing
+                standButton2.setEnabled(false);
+                hitButton2.setEnabled(false);
+                betField2.setEnabled(false);
                 StateHandler.update();
             }
         });
+
         gamePanel.add(standButton2);
     }
-
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
