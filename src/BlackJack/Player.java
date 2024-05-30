@@ -233,7 +233,7 @@ public class Player implements Renderable{
     public void drawCurrentBet(Graphics g, int x, int y, int fontSize){
         g.setColor(Color.YELLOW);
         g.setFont(new Font(Font.SERIF,Font.BOLD, fontSize));
-        g.drawString("Chip Balance: "+chipBalance,x,y);
+        g.drawString("TOKENS: "+chipBalance,x,y);
     }
     //TODO: Adda a update method to handle if the player has finsihed his turn and the draw logic
     @Override
