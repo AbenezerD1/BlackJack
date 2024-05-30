@@ -31,8 +31,10 @@ public class PlayingDeck extends Deck {
      * @return
      */
     private int defineCardValue(CardNumber val){
-         if((val.ordinal()+1) < 11){
+         if((val.ordinal()+1) < 11 && (val.ordinal()+1) >1){
              return val.ordinal() + 1;
+         } else if (val.ordinal()+1 == 1) {
+             return 11;
          }
          return 10;
     }
