@@ -213,13 +213,26 @@ public class Player implements Renderable{
         for(int i = 0; i < playerHand.size(); i++){
             (playerHand.getCard(i)).draw(g,x,y,cardScale);
             x+=imgWidth+10;
+            if(StateHandler.currentState == States.TWO_PLAYER){
+                if(playerNum == 1){
+                    if(x > 400){
+                        x = 30;
+                        y += 125;
+                    }
+                } else{
+                    if(x > 950){
+                        x = 540;
+                        y += 125;
+                    }
+                }
+            }
             //x += ((dealerHand.getCard(i)).getImage().getWidth())+spacingBetweenCards;
         }
     }
 
-    public void drawCurrentBet(Graphics g, int x, int y){
+    public void drawCurrentBet(Graphics g, int x, int y, int fontSize){
         g.setColor(Color.YELLOW);
-        g.setFont(new Font(Font.SERIF,Font.BOLD, 25));
+        g.setFont(new Font(Font.SERIF,Font.BOLD, fontSize));
         g.drawString("Chip Balance: "+chipBalance,x,y);
     }
     //TODO: Adda a update method to handle if the player has finsihed his turn and the draw logic
@@ -235,8 +248,18 @@ public class Player implements Renderable{
     @Override
     public void render(Graphics g) {
         //TODO: Add a check if state is two player and player number to correctly place the player
-        drawPlayerHand(g, drawHandX, drawHandY, cardScale);
-        drawCurrentBet(g,50,750);
+        if(StateHandler.currentState == States.SINGLE_PLAYER){
+            drawCurrentBet(g,50,750,25);
+            drawPlayerHand(g, drawHandX, drawHandY, cardScale);
+        }else{
+            drawPlayerHand(g, drawHandX, drawHandY, cardScale);
+            if(playerNum == 1){
+                drawCurrentBet(g,10,750,15);
+            }else{
+                drawCurrentBet(g,520,750,15);
+            }
+        }
+
     }
 
     public String toString(){
