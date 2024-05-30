@@ -249,7 +249,7 @@ public class Dealer implements Renderable{
     public Card dealcard(){
         Card cardToDeal = mainDeck.drawFromPlayingDeck();
         if(cardToDeal == null){
-            System.err.println("ERROR: Can't draw from a playing deck");
+            System.err.println("ERROR: Can't draw from a empty playing deck");
         }
         cardToDeal.flip(); // flips card from deck then deals it
         return cardToDeal;
@@ -315,10 +315,8 @@ public class Dealer implements Renderable{
      */
     @Override
     public void update() {
-        if(dealerHand.getSum() > 21){
-            if(numOfAces > 0) {
-
-            }
+        if(dealerHand.getSum() >= 17){
+            isPlaying = false;
         }
     }
 

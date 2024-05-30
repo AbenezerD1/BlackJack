@@ -16,6 +16,7 @@ public class SinglePlayerMode {
     private boolean playerWon = false;
     private Player player;
     private Dealer dealer;
+    private boolean playerTurnOver = false;
     JPanel gamePanel = new JPanel() {
         @Override
         protected void paintComponent(Graphics g) {
@@ -70,7 +71,7 @@ public class SinglePlayerMode {
         StateHandler.currentState = States.SINGLE_PLAYER;
 
         player = new Player(1,100,450,0.25);
-        dealer = new Dealer(50,50,0.25);
+        dealer = new Dealer(150,50,0.25);
 
         dealer.flipMainDeck();
         dealer.shufflePlayingDeck();
@@ -92,6 +93,13 @@ public class SinglePlayerMode {
         dealerLabel.setFont(new Font("Serif", Font.BOLD, 24));
         dealerLabel.setBounds(boardWidth / 2 - 50, 8, 100, 30);
         gamePanel.add(dealerLabel);
+
+        // Placeholder for game logic
+        //add game logic classes here
+
+
+
+
 
         // Player 1 Section
         JLabel playerLabel = new JLabel("Player", SwingConstants.CENTER);
@@ -127,6 +135,30 @@ public class SinglePlayerMode {
 
                 //TODO:Fix game logic so no bugs when enforcing the rule of the game
                 Card toDeal = dealer.dealcard();
+//                Deck testDeck = player.getPlayerHand();
+//                testDeck.AddCard(toDeal);
+//                //checks if
+//                if(toDeal.isAce()){
+//                    testDeck.AddCard(toDeal);
+//                    if(testDeck.getSum() > 21){
+//                        testDeck.setCard(testDeck.Size()-1,new Card(toDeal.getCardVal(),toDeal.getSuit(),1));
+//                    }else{
+//                        testDeck.setCard(testDeck.Size()-1,new Card(toDeal.getCardVal(),toDeal.getSuit(),11));
+//                    }
+//                }
+//
+//                if((testDeck.getSum() > 21) && dealer.isPlaying() == false){
+//                    gameEnded = true;
+//                    return;
+//                }else if((testDeck.getSum() > 21)){
+//                    hitButton.setEnabled(false);
+//                    return;
+//                }else if(testDeck.getSum() == 21){
+//                    playerWon = true;
+//                    hitButton.setEnabled(false);
+//                    return;
+//                }
+
                 player.hit(toDeal);
                 StateHandler.update();
             }
@@ -138,23 +170,36 @@ public class SinglePlayerMode {
         standButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Start single player game logic here
-
-                //TODO:Fix game logic so no bugs when enforcing the rule of the game
-                Card toDeal = dealer.dealcard();
-                Deck testDeck = dealer.getDealerHand();
-                testDeck.AddCard(toDeal);
-                //checks if adding this card will make dealer go above 14
-                if(!dealer.isPlaying()){
-                    standButton.setEnabled(false);
-                    return;
+                if (playerTurnOver) {
+                    return; // If the player has already stood, do nothing
                 }
-                dealer.addCardToDealerHand(toDeal);
+                dealer.flipHiddenCard();
+                gamePanel.repaint();
+                // Mark the player's turn as over
+                playerTurnOver = true;
+
+                // Dealer's turn logic
+                while (!dealer.isPlaying()) {
+                    Card toDeal = dealer.dealcard();
+                    // Deck testDeck = dealer.getDealerHand();
+                    //testDeck.AddCard(toDeal);
+                    dealer.addCardToDealerHand(toDeal);
+                    // Check if dealer has reached the threshold (usually 17)
+
+                }
+
+                // Update the game state after the dealer's turn
                 StateHandler.update();
+
+                // Disable the stand and hit buttons after standing
+                standButton.setEnabled(false);
+                hitButton.setEnabled(false);
             }
+
         });
         gamePanel.add(standButton);
     }
+
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
