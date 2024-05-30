@@ -17,7 +17,7 @@ import java.util.ArrayList;
 public class Dealer implements Renderable{
     private PlayingDeck mainDeck; //the playing deck that dealer uses to deal cards
     private Deck dealerHand; //the dealer's hand
-    private boolean isPlaying; //if the dealer has lost yet
+    private boolean isPlaying = true; //if the dealer has lost yet
     private int numOfAces = 0; //number of aces the dealer has
     private int dealerHandX = 0, dealerHandY = 0; //location where dealer hand is drawn
     private double cardScale = 0.25; //scale of the card
@@ -123,7 +123,10 @@ public class Dealer implements Renderable{
         return dealerHandY;
     }
     public boolean isPlaying() {
-        return isPlaying;
+        if(dealerHand.getSum() >= 17){
+            return false;
+        }
+        return true;
     }
 
     //SETTERS
