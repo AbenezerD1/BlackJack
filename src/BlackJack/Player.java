@@ -86,7 +86,7 @@ public class Player implements Renderable{
      * @return if player is still able to draw cards
      */
     public boolean isPlaying() {
-        if(reducedPlayerAce() > 21){
+        if(reducedPlayerAceSum() > 21){
             isPlaying = false;
             return isPlaying;
         }
@@ -186,7 +186,7 @@ public class Player implements Renderable{
         playerHand.setCard(indexOfAce, card);
     }
 
-    public int reducedPlayerAce(){
+    public int reducedPlayerAceSum(){
         int playerSum = playerHand.getSum();
         int aces = getCountAces();
         while(playerSum > 21 && aces > 0){
@@ -216,7 +216,7 @@ public class Player implements Renderable{
     //TODO: Adda a update method to handle if the player has finsihed his turn and the draw logic
     @Override
     public void update() {
-        if(reducedPlayerAce() > 21){
+        if(reducedPlayerAceSum() > 21){
             isPlaying = false;
         }
     }
@@ -226,7 +226,7 @@ public class Player implements Renderable{
     @Override
     public void render(Graphics g) {
         //TODO: Add a check if state is two player and player number to correctly place the player
-        drawPlayerHand(g,drawHandX,drawHandY,cardScale);
+        drawPlayerHand(g, drawHandX, drawHandY, cardScale);
     }
 
     public String toString(){
