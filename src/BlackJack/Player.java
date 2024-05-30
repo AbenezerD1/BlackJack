@@ -85,7 +85,11 @@ public class Player implements Renderable{
     /**
      * @return if player is still able to draw cards
      */
-    public boolean isTurn() {
+    public boolean isPlaying() {
+        if(reducedPlayerAce() > 21){
+            isPlaying = false;
+            return isPlaying;
+        }
         return isPlaying;
     }
 
@@ -182,6 +186,16 @@ public class Player implements Renderable{
         playerHand.setCard(indexOfAce, card);
     }
 
+    public int reducedPlayerAce(){
+        int playerSum = playerHand.getSum();
+        int aces = getCountAces();
+        while(playerSum > 21 && aces > 0){
+            playerSum -= 10;
+            aces -= 1;
+        }
+        return playerSum;
+    }
+
     //RENDERING
     /**
      * renders a player's hand at a location x,y where x and y are the first cards top left corner
@@ -202,18 +216,8 @@ public class Player implements Renderable{
     //TODO: Adda a update method to handle if the player has finsihed his turn and the draw logic
     @Override
     public void update() {
-        /**
-         * POSSIBILITIES
-         * 1. Player has cards that are under 21
-         * 2. Player gotten card that makes over 21
-         *
-         */
-
-
-        if(playerHand.getSum() > 21){
+        if(reducedPlayerAce() > 21){
             isPlaying = false;
-        } else if (playerHand.getSum() == 21) {
-
         }
     }
 
