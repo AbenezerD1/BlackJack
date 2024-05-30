@@ -10,6 +10,8 @@ public class SinglePlayerMode {
     int boardWidth = 1000;
     int boardHeight = 800;
 
+    private static SinglePlayerMode game;
+
     // Main frame and panel
     JFrame frame = new JFrame("Single Player Mode");
     private boolean dealerWon = false, draw = false;
@@ -39,7 +41,19 @@ public class SinglePlayerMode {
                 g.setFont(new Font(Font.SERIF, Font.BOLD,50));
                 g.drawString("DRAW", boardWidth/2-150,boardHeight/2-10);
             }
-
+            if(dealerWon || playerWon || draw){
+                JButton playAgain = new JButton("Play Again");
+                playAgain.setBackground(Color.WHITE);
+                playAgain.setBorderPainted(true);
+                playAgain.setBounds(boardWidth / 2 - 50, boardHeight/2 , 100, 50);
+                playAgain.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        game = new SinglePlayerMode();
+                    }
+                });
+                gamePanel.add(playAgain);
+            }
             //Draw a white horizontal line in the middle
             g.setColor(Color.WHITE);
             int midY = getHeight() / 2;
@@ -125,7 +139,6 @@ public class SinglePlayerMode {
                 int betAmount = Integer.parseInt(betField.getText());
                 playerBet = betAmount;
 
-                StateHandler.update();
                 player.placeBet(betAmount);
                 betField.setEnabled(false);
                 StateHandler.update();
@@ -162,7 +175,6 @@ public class SinglePlayerMode {
             public void actionPerformed(ActionEvent e) {
                 dealer.flipHiddenCard();
                 // Mark the player's turn as over
-                playerTurnOver = true;
 
                 // Dealer's turn logic
                 while (dealer.isPlaying()) {
@@ -214,7 +226,7 @@ public class SinglePlayerMode {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                new SinglePlayerMode();
+                game = new SinglePlayerMode();
             }
         });
     }
