@@ -15,6 +15,8 @@ public class TwoPlayerMode {
     private Player player1;
     private Player player2;
     private Dealer dealer;
+    private boolean player1Won,player2Won,dealerWon,draw;
+
     JPanel gamePanel = new JPanel() {
         @Override
         protected void paintComponent(Graphics g) {
@@ -23,6 +25,28 @@ public class TwoPlayerMode {
             g.setColor(Color.WHITE);
             int midY = getHeight() / 2;
             g.drawLine(0, midY, getWidth(), midY);
+
+            if(dealerWon){
+                g.setColor(Color.RED);
+                g.setFont(new Font(Font.SERIF, Font.BOLD,50));
+                g.drawString("BUSTED", boardWidth/2-150,boardHeight/2-10);
+            }
+            if(player1Won){
+                g.setColor(Color.YELLOW);
+                g.setFont(new Font(Font.SERIF, Font.BOLD,50));
+                g.drawString("PLAYER 1 WON", boardWidth/2-150,boardHeight/2-10);
+            }
+            if(player2Won){
+                g.setColor(Color.YELLOW);
+                g.setFont(new Font(Font.SERIF, Font.BOLD,50));
+                g.drawString("PLAYER 2 WON", boardWidth/2-150,boardHeight/2-10);
+            }
+            if(draw){
+                g.setColor(Color.BLUE);
+                g.setFont(new Font(Font.SERIF, Font.BOLD,50));
+                g.drawString("DRAW", boardWidth/2-150,boardHeight/2);
+            }
+
 
             // Draw a white vertical line in the middle of the bottom half
             int midX = getWidth() / 2;
