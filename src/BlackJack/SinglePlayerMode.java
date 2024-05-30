@@ -17,6 +17,7 @@ public class SinglePlayerMode {
     private Player player;
     private Dealer dealer;
     private boolean playerTurnOver = false;
+    private int playerBet = 0;
     JPanel gamePanel = new JPanel() {
         @Override
         protected void paintComponent(Graphics g) {
@@ -36,7 +37,7 @@ public class SinglePlayerMode {
             if(draw){
                 g.setColor(Color.BLUE);
                 g.setFont(new Font(Font.SERIF, Font.BOLD,50));
-                g.drawString("DRAW", boardWidth/2-150,boardHeight/2);
+                g.drawString("DRAW", boardWidth/2-150,boardHeight/2-10);
             }
 
             //Draw a white horizontal line in the middle
@@ -114,6 +115,22 @@ public class SinglePlayerMode {
 
         JTextField betField = new JTextField();
         betField.setHorizontalAlignment(JTextField.CENTER);
+        betField.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(player.getChipBalance() == 0) {
+                    betField.setEnabled(false);
+                    return;
+                }
+                int betAmount = Integer.parseInt(betField.getText());
+                playerBet = betAmount;
+
+                StateHandler.update();
+                player.placeBet(betAmount);
+                betField.setEnabled(false);
+                StateHandler.update();
+            }
+        });
 
         betPanel.add(betLabel, BorderLayout.NORTH);
         betPanel.add(betField, BorderLayout.CENTER);
@@ -129,6 +146,7 @@ public class SinglePlayerMode {
                 //if player card sum is over 21
                 if(!player.isPlaying()) {
                     hitButton.setEnabled(false);
+                    betField.setEnabled(false);
                     return;
                 }
                 player.hit(dealer.dealcard());
@@ -142,11 +160,7 @@ public class SinglePlayerMode {
         standButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (playerTurnOver) {
-                    return; // If the player has already stood, do nothing
-                }
                 dealer.flipHiddenCard();
-                gamePanel.repaint();
                 // Mark the player's turn as over
                 playerTurnOver = true;
 
@@ -158,11 +172,9 @@ public class SinglePlayerMode {
                     dealer.addCardToDealerHand(toDeal);
                     StateHandler.update();
                     // Check if dealer has reached the threshold (usually 17)
-
                 }
-
-                int playerDistanceFrom21 = Math.abs(player.getPlayerHand().getSum() - 21);
-                int dealerDistanceFrom21 = Math.abs(dealer.getDealerHand().getSum() - 21);
+                int playerDistanceFrom21 = Math.abs(player.reducedPlayerAceSum() - 21);
+                int dealerDistanceFrom21 = Math.abs(dealer.reducedDealerAceSum() - 21);
 
                 if(!player.isPlaying()){
                     //player has card sum over 21
@@ -170,23 +182,29 @@ public class SinglePlayerMode {
                 }else if(dealer.getDealerLost()){
                     //dealer has card sum over 21
                     playerWon = true;
+                    player.setNumOfChips(player.getChipBalance()+2* playerBet);
+                    StateHandler.update();
                 } else if (playerDistanceFrom21 == dealerDistanceFrom21){
                     //player and dealer has same sum
                     draw = true;
+                    player.setNumOfChips(player.getChipBalance()+ playerBet);
+                    StateHandler.update();
                 }else if(playerDistanceFrom21 < dealerDistanceFrom21){
                     //player closer to 21
                     playerWon = true;
+                    player.setNumOfChips(player.getChipBalance()+2* playerBet);
+                    StateHandler.update();
                 }else if(playerDistanceFrom21 > dealerDistanceFrom21){
                     //dealer closer to 21
                     dealerWon = true;
                 }
+
                 // Disable the stand and hit buttons after standing
                 standButton.setEnabled(false);
                 hitButton.setEnabled(false);
-
+                betField.setEnabled(false);
                 StateHandler.update();
             }
-
         });
         gamePanel.add(standButton);
     }
