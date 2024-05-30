@@ -246,6 +246,7 @@ public class Dealer implements Renderable{
      * @return a card off the playing deck
      */
     public Card dealcard(){
+        mainDeck.ShufflePlayingDeck();
         Card cardToDeal = mainDeck.drawFromPlayingDeck();
         if(cardToDeal == null){
             System.err.println("ERROR: Can't draw from a empty playing deck");
