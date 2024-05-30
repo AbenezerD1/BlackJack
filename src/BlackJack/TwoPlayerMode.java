@@ -16,7 +16,7 @@ public class TwoPlayerMode {
     private Player player2;
     private Dealer dealer;
     private boolean gameOver = false, player1Finsihed = false, player2Finsihed = false;
-    private boolean player1Won,player2Won,dealerWon,draw;
+    private boolean player1Won,player2Won,dealerWon,draw, player1Busted, player2Busted;
     private int playerBet1,playerBet2;
 
     JPanel gamePanel = new JPanel() {
@@ -32,26 +32,60 @@ public class TwoPlayerMode {
             int midX = getWidth() / 2;
             g.drawLine(midX, midY, midX, getHeight());
 
+            int dealerStatusX = boardWidth/2 - 75,dealerStatusY = boardHeight/2 - 50;
+            int playerOneX = boardWidth / 2 - 350,playerOneY = boardHeight / 2 + 260;
+            int playerTwoX = boardWidth / 2 + 150,playerTwoY = boardHeight / 2 + 260;
             if(gameOver){
-                if (dealerWon) {
+                if(player1Busted){
+                    //player 1 got over 21
                     g.setColor(Color.RED);
-                    g.setFont(new Font(Font.SERIF, Font.BOLD, 50));
-                    g.drawString("BUSTED", boardWidth / 2 - 150, boardHeight / 2 - 50);
+                    g.setFont(new Font(Font.SERIF, Font.BOLD, 25));
+                    g.drawString("PLAYER ONE BUSTED", playerOneX, playerOneY);
                 }
-                if (player1Won) {
-                    g.setColor(Color.YELLOW);
-                    g.setFont(new Font(Font.SERIF, Font.BOLD, 50));
-                    g.drawString("PLAYER 1 WON", boardWidth / 2 - 150, boardHeight / 2 - 50);
+                if(player2Busted){
+                    //player 2 got over 21
+                    g.setColor(Color.RED);
+                    g.setFont(new Font(Font.SERIF, Font.BOLD, 25));
+                    g.drawString("PLAYER TWO BUSTED", playerTwoX, playerTwoY);
                 }
-                if (player2Won) {
-                    g.setColor(Color.YELLOW);
-                    g.setFont(new Font(Font.SERIF, Font.BOLD, 50));
-                    g.drawString("PLAYER 2 WON", boardWidth / 2 - 150, boardHeight / 2 - 50);
+                if (dealerWon) {
+                    //both players lost
+                    g.setColor(Color.RED);
+                    g.setFont(new Font(Font.SERIF, Font.BOLD, 25));
+                    g.drawString("PLAYER 1 LOST", playerOneX, playerOneY);
+                    g.drawString("PLAYER 2 LOST", playerTwoX, playerTwoY);
+                    g.setColor(Color.BLUE);
+                    g.drawString("DEALER WON", dealerStatusX, dealerStatusY);
+                }
+                if(!player1Busted){
+                    if (player1Won) {
+                        // player 2 lost
+                        g.setColor(Color.GREEN);
+                        g.setFont(new Font(Font.SERIF, Font.BOLD, 25));
+                        g.drawString("PLAYER 1 WON", playerOneX, playerOneY);
+                    } else {
+                        g.setColor(Color.RED);
+                        g.setFont(new Font(Font.SERIF, Font.BOLD, 25));
+                        g.drawString("PLAYER 1 LOST", playerOneX, playerOneY);
+                    }
+                }
+                if(!player2Busted){
+                    if (player2Won) {
+                        //player 1 lost
+                        g.setColor(Color.GREEN);
+                        g.setFont(new Font(Font.SERIF, Font.BOLD, 25));
+                        g.drawString("PLAYER 2 WON", playerTwoX, playerTwoY);
+                    } else {
+                        g.setColor(Color.RED);
+                        g.setFont(new Font(Font.SERIF, Font.BOLD, 25));
+                        g.drawString("PLAYER 2 LOST", playerTwoX, playerTwoY);
+                    }
                 }
                 if (draw) {
-                    g.setColor(Color.BLUE);
-                    g.setFont(new Font(Font.SERIF, Font.BOLD, 50));
-                    g.drawString("DRAW", boardWidth / 2 - 150, boardHeight / 2 - 50);
+                    //all three tied
+                    g.setColor(Color.ORANGE);
+                    g.setFont(new Font(Font.SERIF, Font.BOLD, 25));
+                    g.drawString("PUSH", boardWidth / 2 - 150, boardHeight / 2 - 50);
                 }
 
                 JButton playAgain = new JButton("Play Again");
@@ -208,7 +242,8 @@ public class TwoPlayerMode {
 
                 if (!player1.isPlaying() && !player2.isPlaying()) {
                     //if both players have reduced card sum over 21
-                    dealerWon = true;
+                    player1Busted = true;
+                    player2Busted = true;
                 } else if (player1.isPlaying() && player2.isPlaying() && dealer.getDealerLost()) {
                     //if both players cards are under 21 and dealer has reduced ace card sum over 21
                     if (player1DistanceFrom21 < player2DistanceFrom21) {
@@ -224,7 +259,49 @@ public class TwoPlayerMode {
                         player1.setNumOfChips(player1.getChipBalance() + playerBet1);
                         player2.setNumOfChips(player2.getChipBalance() + playerBet2);
                     }
-                } else if (!dealer.getDealerLost() && player1.isPlaying()) {
+                } else if (player1.isPlaying() && player2.isPlaying() && !dealer.getDealerLost()) {
+                    //if both players cards are under 21 and dealer has reduced ace card sum under 21
+                    if(dealerDistanceFrom21 < player2DistanceFrom21 && dealerDistanceFrom21 < player1DistanceFrom21){
+                        //if dealer is closer to 21 than both players
+                        dealerWon = true;
+                    }
+                    if (player1DistanceFrom21 < player2DistanceFrom21) {
+                        //if player 1 is closer to 21
+                        if(player1DistanceFrom21 < dealerDistanceFrom21){
+                            //player 1 is closest
+                            player1Won = true;
+                            player1.setNumOfChips(player1.getChipBalance() + 2 * playerBet1);
+                        }else{
+                            //dealer is closest
+                            dealerWon = true;
+                        }
+                    } else if (player1DistanceFrom21 > player2DistanceFrom21) {
+                        //if player 2 is closer to 21
+                        if(player2DistanceFrom21 < dealerDistanceFrom21){
+                            //player to is closest to 21
+                            player2Won = true;
+                            player2.setNumOfChips(player2.getChipBalance() + 2 * playerBet2);
+                        }else{
+                            //dealer is closest
+                            dealerWon = true;
+                        }
+                    } else {
+                        //if both players are same distance from 21 than dealer
+                        if(player1DistanceFrom21 < dealerDistanceFrom21){
+                            player1Won = true;
+                            player2Won = true;
+                        }else if(player1DistanceFrom21 == dealerDistanceFrom21){
+                            //dealer and players are same distance away
+                            draw = true;
+                        }else{
+                            //dealer is closer than both players
+                            dealerWon = true;
+                        }
+                        player1.setNumOfChips(player1.getChipBalance() + playerBet1);
+                        player2.setNumOfChips(player2.getChipBalance() + playerBet2);
+                    }
+                }else if (!dealer.getDealerLost() && player1.isPlaying()) {
+                    player2Busted = true;
                     //if dealer and player 1 have cards below 21 and player 2 lost
                     if (dealerDistanceFrom21 > player1DistanceFrom21) {
                         //if player one has card sum closer to 21
@@ -238,7 +315,8 @@ public class TwoPlayerMode {
                         player1.setNumOfChips(player1.getChipBalance() + 2 * playerBet1);
                     }
                 } else if (!dealer.getDealerLost() && player2.isPlaying()) {
-                    //if dealer and player 1 have cards below 21 and player 2 lost
+                    player1Busted = true;
+                    //if dealer and player 2 have cards below 21 and player 1 lost
                     if (dealerDistanceFrom21 > player2DistanceFrom21) {
                         //if player one has card sum closer to 21
                         player2Won = true;
@@ -250,7 +328,6 @@ public class TwoPlayerMode {
                         draw = true;
                         player2.setNumOfChips(player2.getChipBalance() + 2 * playerBet2);
                     }
-
                 }
                 // Disable the stand and hit buttons after standing
                 standButton1.setEnabled(false);
