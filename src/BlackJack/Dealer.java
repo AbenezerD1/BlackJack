@@ -240,6 +240,20 @@ public class Dealer implements Renderable{
         //swaps the ace with the provided ace
         dealerHand.setCard(indexOfAce, card);
     }
+
+    public int getAceIndex(){
+        for(int i = 0; i < dealerHand.size(); i++){
+            if(dealerHand.getCard(i).isAce()){
+                return i;
+            }
+        }
+        return -1;
+    }
+
+// returns suit of first ace in dealers hand
+    public Suit getAceSuit(){
+        return dealerHand.getCard(0).getSuit();
+    }
     /**
      * gives a card off the top(at the end) of the playing deck
      *
@@ -320,6 +334,9 @@ public class Dealer implements Renderable{
         }
     }
 
+public int getDealerSum(){
+    return dealerHand.getSum();
+}
     /**
      *draws the dealer and the main deck
      */

@@ -179,16 +179,45 @@ public class SinglePlayerMode {
                 playerTurnOver = true;
 
                 // Dealer's turn logic
-                while (dealer.isPlaying()) {
+                player.update();
+                dealer.update();
+                int playersum = player.getPlayerSum();
+                if(dealer.getNumOfAces() > 0 && dealer.getDealerSum() < 12){
+                    Suit aceSuit = dealer.getAceSuit();
+                    Card AceCard = new Card(CardNumber.ACE, aceSuit, 11);
+                    int aceIndex = dealer.getAceIndex();
+                    dealer.updateAceValue(aceIndex,AceCard);
+                }
+                int dealersum = dealer.getDealerSum();
+                while (((playersum > dealersum) && (playersum < 22)) || dealersum < 17) {
+                    if((playersum < dealersum) && (playersum < 22)){
+                        break;
+                    }
                     Card toDeal = dealer.dealcard();
+                    dealer.addCardToDealerHand(toDeal);
+                    if(dealer.getNumOfAces() > 0 && dealersum < 12){
+                        Suit aceSuit = dealer.getAceSuit();
+                        Card AceCard = new Card(CardNumber.ACE, aceSuit, 11);
+                        int aceIndex = dealer.getAceIndex();
+                        dealer.updateAceValue(aceIndex,AceCard);
+                    }
+                    if(dealer.getDealerSum() == 21){
+                        break;
+                    }
                     // Deck testDeck = dealer.getDealerHand();
                     //testDeck.AddCard(toDeal);
-                    dealer.addCardToDealerHand(toDeal);
+                    if(dealer.getNumOfAces() > 0 && dealersum > 21){
+                        Suit aceSuit = dealer.getAceSuit();
+                        Card AceCard = new Card(CardNumber.ACE, aceSuit, 1);
+                        int aceIndex = dealer.getAceIndex();
+                        dealer.updateAceValue(aceIndex,AceCard);
+                    }
                     dealer.update();
+                    dealersum = dealer.getDealerSum();
                     // Check if dealer has reached the threshold (usually 17)
 
                 }
-
+            System.out.print(dealer.getDealerSum());
                 // Update the game state after the dealer's turn
                 StateHandler.update();
 

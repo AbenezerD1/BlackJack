@@ -216,7 +216,9 @@ public class Player implements Renderable{
 
         }
     }
-
+    public int getPlayerSum(){
+        return playerHand.getSum();
+    }
     /**
      */
     @Override
