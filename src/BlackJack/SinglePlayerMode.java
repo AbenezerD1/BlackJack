@@ -12,7 +12,7 @@ public class SinglePlayerMode {
 
     // Main frame and panel
     JFrame frame = new JFrame("Single Player Mode");
-    private boolean gameEnded = false;
+    private boolean dealerWon = false, draw = false;
     private boolean playerWon = false;
     private Player player;
     private Dealer dealer;
@@ -22,20 +22,21 @@ public class SinglePlayerMode {
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
 
-            //TODO:use StateHandler to update the states instead updating states here
-            // could do that when dealer and player have both implemented the update methods
-            // when implemented just call StateHandler.update()
-
-            if(gameEnded) {
+            if(dealerWon){
                 g.setColor(Color.RED);
                 g.setFont(new Font(Font.SERIF, Font.BOLD,50));
-                g.drawString("GAME OVER", boardWidth/2-150,boardHeight/2);
-                return;
+                g.drawString("BUSTED", boardWidth/2-150,boardHeight/2-10);
             }
             if(playerWon){
                 g.setColor(Color.YELLOW);
                 g.setFont(new Font(Font.SERIF, Font.BOLD,50));
                 g.drawString("YOU WON", boardWidth/2-150,boardHeight/2-10);
+            }
+
+            if(draw){
+                g.setColor(Color.BLUE);
+                g.setFont(new Font(Font.SERIF, Font.BOLD,50));
+                g.drawString("DRAW", boardWidth/2-150,boardHeight/2);
             }
 
             //Draw a white horizontal line in the middle
@@ -71,7 +72,7 @@ public class SinglePlayerMode {
         StateHandler.currentState = States.SINGLE_PLAYER;
 
         player = new Player(1,100,450,0.25);
-        dealer = new Dealer(150,50,0.25);
+        dealer = new Dealer(50,50,0.25);
 
         dealer.flipMainDeck();
         dealer.shufflePlayingDeck();
@@ -84,6 +85,7 @@ public class SinglePlayerMode {
         player.hit(dealer.dealcard());
         player.hit(dealer.dealcard());
 
+        StateHandler.update();
     }
 
     private void addComponentsToPanel() {
@@ -93,13 +95,6 @@ public class SinglePlayerMode {
         dealerLabel.setFont(new Font("Serif", Font.BOLD, 24));
         dealerLabel.setBounds(boardWidth / 2 - 50, 8, 100, 30);
         gamePanel.add(dealerLabel);
-
-        // Placeholder for game logic
-        //add game logic classes here
-
-
-
-
 
         // Player 1 Section
         JLabel playerLabel = new JLabel("Player", SwingConstants.CENTER);
@@ -131,35 +126,12 @@ public class SinglePlayerMode {
         hitButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Start single player game logic here
-
-                //TODO:Fix game logic so no bugs when enforcing the rule of the game
-                Card toDeal = dealer.dealcard();
-//                Deck testDeck = player.getPlayerHand();
-//                testDeck.AddCard(toDeal);
-//                //checks if
-//                if(toDeal.isAce()){
-//                    testDeck.AddCard(toDeal);
-//                    if(testDeck.getSum() > 21){
-//                        testDeck.setCard(testDeck.Size()-1,new Card(toDeal.getCardVal(),toDeal.getSuit(),1));
-//                    }else{
-//                        testDeck.setCard(testDeck.Size()-1,new Card(toDeal.getCardVal(),toDeal.getSuit(),11));
-//                    }
-//                }
-//
-//                if((testDeck.getSum() > 21) && dealer.isPlaying() == false){
-//                    gameEnded = true;
-//                    return;
-//                }else if((testDeck.getSum() > 21)){
-//                    hitButton.setEnabled(false);
-//                    return;
-//                }else if(testDeck.getSum() == 21){
-//                    playerWon = true;
-//                    hitButton.setEnabled(false);
-//                    return;
-//                }
-
-                player.hit(toDeal);
+                //if player card sum is over 21
+                if(!player.isPlaying()) {
+                    hitButton.setEnabled(false);
+                    return;
+                }
+                player.hit(dealer.dealcard());
                 StateHandler.update();
             }
         });
@@ -184,17 +156,35 @@ public class SinglePlayerMode {
                     // Deck testDeck = dealer.getDealerHand();
                     //testDeck.AddCard(toDeal);
                     dealer.addCardToDealerHand(toDeal);
-                    dealer.update();
+                    StateHandler.update();
                     // Check if dealer has reached the threshold (usually 17)
 
                 }
 
-                // Update the game state after the dealer's turn
-                StateHandler.update();
+                int playerDistanceFrom21 = Math.abs(player.getPlayerHand().getSum() - 21);
+                int dealerDistanceFrom21 = Math.abs(dealer.getDealerHand().getSum() - 21);
 
+                if(!player.isPlaying()){
+                    //player has card sum over 21
+                    dealerWon = true;
+                }else if(dealer.getDealerLost()){
+                    //dealer has card sum over 21
+                    playerWon = true;
+                } else if (playerDistanceFrom21 == dealerDistanceFrom21){
+                    //player and dealer has same sum
+                    draw = true;
+                }else if(playerDistanceFrom21 < dealerDistanceFrom21){
+                    //player closer to 21
+                    playerWon = true;
+                }else if(playerDistanceFrom21 > dealerDistanceFrom21){
+                    //dealer closer to 21
+                    dealerWon = true;
+                }
                 // Disable the stand and hit buttons after standing
                 standButton.setEnabled(false);
                 hitButton.setEnabled(false);
+
+                StateHandler.update();
             }
 
         });
