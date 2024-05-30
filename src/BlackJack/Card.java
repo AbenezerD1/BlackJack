@@ -31,8 +31,8 @@ public class Card {
      * @param cardPointValue
      */
     public Card(CardNumber cardNum, Suit suit, int cardPointValue) {
-        this.cardNum = cardNum;
-        this.suit = suit;
+        SetCardNum(cardNum);
+        SetSuit(suit);
         setCardPointValue(cardPointValue);
 
         //assigning card image to appropriate card from assets
@@ -101,7 +101,7 @@ public class Card {
      * @param points
      */
     public void setCardPointValue(int points){
-        if(points < 0 && points > 11) {
+        if((points < 0) || (points > 11)) {
             System.err.println("ERROR: Card Value " + points + " is out of range");
             this.cardPointValue =  1;
             return;
