@@ -4,9 +4,8 @@ import java.awt.*;
 import java.util.ArrayList;
 
 /**
- * Creates a dealer with a playing deck, a dealer hand, wheter they are still playing, number of aces, and
- * locationa & scale of the dealers hand   ||
- *
+ * Creates a dealer with a playing deck, a dealer hand, whether they are still playing, number of aces, and
+ * location & scale of the dealers hand   ||
  * Contains methods:
  * getters: getMainDeck(), getDealerHand(), isPlaying(), getDealerHandX(), getDealerHandY(), getCardScale()
  * , getNumOfAces()||
@@ -17,7 +16,7 @@ import java.util.ArrayList;
 public class Dealer implements Renderable{
     private PlayingDeck mainDeck; //the playing deck that dealer uses to deal cards
     private Deck dealerHand; //the dealer's hand
-    private boolean isPlaying = true; //if the dealer has lost yet
+    private boolean isPlaying; //if the dealer has lost yet
     private boolean lost = false;
     private int numOfAces = 0; //number of aces the dealer has
     private int dealerHandX = 0, dealerHandY = 0; //location where dealer hand is drawn
@@ -26,8 +25,7 @@ public class Dealer implements Renderable{
     //CONSTRUCTORS
     /**
      * Creates an ordered standard playing deck with 52 cards, sets dealer hand to empty deck, sets dealer isPlaying to true
-     * and adds them to adds single player and two player renderable array list
-     *
+     * and adds them to adds single player and two player render able array list
      * PRECONDITION: none
      */
     public Dealer(int handX, int handY, double cardScale){
@@ -40,14 +38,13 @@ public class Dealer implements Renderable{
         this.isPlaying = true;
         this.mainDeck.BuildPlayingDeck();
 
-        //adds dealer to state handlers arraylist of rendereable objects to be rendered and updated
+        //adds dealer to state handlers arraylist of render able objects to be rendered and updated
         StateHandler.addRenderableElement(States.SINGLE_PLAYER,this);
         StateHandler.addRenderableElement(States.TWO_PLAYER,this);
     }
     /**
      * Creates a dealer with a given playing deck, dealer hand, and the number of aces the dealer has
      * adds it to elements to be rendered by state handler
-     *
      * PRECONDITION: none
      */
     public Dealer(PlayingDeck mainDeck, Deck dealerHand, int numOfAces) {
@@ -57,14 +54,13 @@ public class Dealer implements Renderable{
         this.numOfAces = numOfAces;
         this.mainDeck.BuildPlayingDeck();
 
-        //adds dealer to state handlers arraylist of rendereable objects to be rendered and updated
+        //adds dealer to state handlers arraylist of render able objects to be rendered and updated
         StateHandler.addRenderableElement(States.SINGLE_PLAYER,this);
         StateHandler.addRenderableElement(States.TWO_PLAYER,this);
     }
 
     /**
      * deep copies all properties of other dealer into this dealer
-     *
      * PRECONDITION: none
      */
     public Dealer(Dealer other){
@@ -74,7 +70,7 @@ public class Dealer implements Renderable{
         this.numOfAces = other.numOfAces;
         this.mainDeck.BuildPlayingDeck();
 
-        //adds dealer to state handlers arraylist of rendereable objects to be rendered and updated
+        //adds dealer to state handlers arraylist of render able objects to be rendered and updated
         StateHandler.addRenderableElement(States.SINGLE_PLAYER,this);
         StateHandler.addRenderableElement(States.TWO_PLAYER,this);
     }
@@ -85,7 +81,6 @@ public class Dealer implements Renderable{
     }
     /**
      * returns a deep copy of this playing deck
-     *
      * PRECONDITION: none
      * @return current playing deck
      */
@@ -99,8 +94,7 @@ public class Dealer implements Renderable{
         return cardScale;
     }
     /**
-     * number of aces the dealer has recieved
-     * @return
+     * number of aces the dealer has received
      */
     public int getNumOfAces() {
         return numOfAces;
@@ -122,7 +116,6 @@ public class Dealer implements Renderable{
     }
     /**
      * gets the x value of where the dealers hand is going to be drawn
-     * @return
      */
     public int getDealerHandX() {
         return dealerHandX;
@@ -130,62 +123,53 @@ public class Dealer implements Renderable{
 
     /**
      * gets the y value of where the dealers hand is going to be drawn
-     * @return
      */
     public int getDealerHandY() {
         return dealerHandY;
     }
+    /**
+     * if the dealer hasn't gotten a card over 17
+     */
     public boolean isPlaying() {
-        if(dealerHand.getSum() >= 17){
-            return false;
-        }
-        return true;
+        return dealerHand.getSum() < 17;
     }
 
     //SETTERS
     /**
      * sets the dealer hand with a given deck of cards
-     *
-     * PRECONDITION: deck of cards passed isn't null
+     * PRECONDITIONS: deck of cards passed isn't null
      * POSTCONDITION: sets dealer's hand to given deck of cards
-     * @param dealerHand
      */
     public void setDealerHand(Deck dealerHand) {
         if(dealerHand == null){
             System.err.println("ERROR: Dealer's deck can't be set to null");
+            return;
         }
         this.dealerHand = new Deck(dealerHand);
     }
     /**
      * returns a deep copy of this playing deck
-     *
      * PRECONDITION: other playing deck isn't null
      * POSTCONDITION: sets the main deck to other's playing deck
      */
     public void setMainDeck(PlayingDeck other) {
         if(other == null){
             System.err.println("ERROR: The playing deck can't be set to null");
+            return;
         }
         mainDeck = new PlayingDeck(other);
     }
-    /**
-     * if the dealer hasn't gotten a card over 17
-     * @return
-     */
+
     /**
      * sets if dealer is playing or not
-     * @param playing
      */
     public void setPlaying(boolean playing) {
         isPlaying = playing;
     }
     /**
      * sets the position where the dealers hand is going to be drawn
-     *
      * PRECONDITION: x and y values passed in are greater than zero
      * POSTCONDITION: updates x,y coordinates of the dealers hand
-     * @param dealerHandX
-     * @param dealerHandY
      */
     public void setDrawHandPosition(int dealerHandX, int dealerHandY) {
         if(dealerHandX < 0 || dealerHandY < 0){
@@ -197,7 +181,6 @@ public class Dealer implements Renderable{
     }
     /**
      * adjusts the card scale of the dealer's hand
-     *
      * PRECONDITION: card scale passed in is greater than zero
      * POSTCONDITION: sets the scale of the cards
      */
@@ -239,7 +222,6 @@ public class Dealer implements Renderable{
      * Lets dealer decide the value of an ace
      * @param indexOfAce
      * @param card a new ace with the value you want to replace it with
-     * @return
      */
     public void updateAceValue(int indexOfAce, Card card){
         if(card.getCardNum() != CardNumber.ACE){
@@ -260,7 +242,6 @@ public class Dealer implements Renderable{
     }
     /**
      * gives a card off the top(at the end) of the playing deck
-     *
      * PRECONDITION: playing deck has at least one card
      * @return a card off the playing deck
      */
@@ -274,10 +255,8 @@ public class Dealer implements Renderable{
     }
     /**
      * adds a card to dealers hand
-     *
      * PRECONDITION: card passed in isn't null
      * POSTCONDITION: adds card to dealer's hand
-     * @param card
      */
     public void addCardToDealerHand(Card card){
         if(card == null){
@@ -298,11 +277,6 @@ public class Dealer implements Renderable{
     //RENDERING METHODS
     /**
      * draws the curent hand of the dealer
-     * @param g
-     * @param x
-     * @param y
-     * @param spacingBetweenCards
-     * @param cardScale
      */
     private void drawDealerHand(Graphics g, int x, int y, int spacingBetweenCards, double cardScale){
         int imgWidth = (new Card(CardNumber.ACE,Suit.CLUB, 1)).getCardFrontImage().getWidth();
@@ -314,10 +288,6 @@ public class Dealer implements Renderable{
     }
     /**
      * draws the main deck as stacked cards
-     * @param g
-     * @param x
-     * @param y
-     * @param cardScale
      */
     private void drawMainDeck(Graphics g, int x, int y, double cardScale){
         for(int i = 0; i < 10; i ++){
